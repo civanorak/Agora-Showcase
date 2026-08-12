@@ -1,0 +1,21 @@
+version: "1"
+vendor: OpenAI
+
+signatures:
+  - id: openai_chatgpt_user
+    ua_contains: ["ChatGPT-User"]
+    verdict: assistant_browse
+    confidence: 0.97
+    notes: "Live user-initiated fetch via ChatGPT Browse. Highest commercial value."
+
+  - id: openai_searchbot
+    ua_contains: ["OAI-SearchBot"]
+    verdict: crawler_search
+    confidence: 0.97
+    notes: "OpenAI search indexer for ChatGPT search feature."
+
+  - id: openai_gptbot
+    ua_contains: ["GPTBot"]
+    verdict: crawler_training
+    confidence: 0.95
+    notes: "OpenAI training crawler. Respects robots.txt Disallow."

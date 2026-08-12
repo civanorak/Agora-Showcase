@@ -1,0 +1,39 @@
+version: "1"
+vendor: Various
+
+signatures:
+  - id: google_bot
+    ua_contains: ["Googlebot"]
+    verdict: crawler_search
+    confidence: 0.97
+    notes: "Google search crawler."
+
+  - id: amazon_bot
+    ua_contains: ["Amazonbot"]
+    verdict: crawler_search
+    confidence: 0.90
+    notes: "Amazon / Alexa / Rufus product crawler."
+
+  - id: meta_agent
+    ua_contains: ["Meta-ExternalAgent", "FacebookBot"]
+    verdict: crawler_training
+    confidence: 0.88
+    notes: "Meta AI training crawler."
+
+  - id: bytespider
+    ua_contains: ["Bytespider"]
+    verdict: crawler_training
+    confidence: 0.90
+    notes: "ByteDance crawler. Known to ignore robots.txt."
+
+  - id: ccbot
+    ua_contains: ["CCBot"]
+    verdict: crawler_training
+    confidence: 0.92
+    notes: "Common Crawl — used as training data by many LLMs."
+
+  - id: duckassist
+    ua_contains: ["DuckAssistBot"]
+    verdict: assistant_browse
+    confidence: 0.88
+    notes: "DuckDuckGo AI answer assistant crawler."

@@ -1,0 +1,46 @@
+# Dependencies
+__pycache__/
+*.pyc
+*.pyo
+node_modules/
+dist/
+test-results/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+pgdata/
+
+# Python
+*.egg-info/
+.venv/
+.coverage
+.pytest_cache/
+.ruff_cache/
+
+# Graphify knowledge-graph output (regenerable)
+graphify-out/
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# Outreach scan artifacts (regenerable raw dumps — keep curated candidates only)
+scripts/audit_details.json
+scripts/targets.txt
+scripts/orkestra_candidates.csv

@@ -1,0 +1,15 @@
+version: "1"
+vendor: Perplexity
+
+signatures:
+  - id: perplexity_user
+    ua_contains: ["Perplexity-User", "PerplexityUser"]
+    verdict: assistant_browse
+    confidence: 0.96
+    notes: "Live user query via Perplexity AI. High commercial intent."
+
+  - id: perplexity_bot
+    ua_contains: ["PerplexityBot"]
+    verdict: crawler_search
+    confidence: 0.95
+    notes: "Perplexity search indexer."

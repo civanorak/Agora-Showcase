@@ -1,0 +1,21 @@
+version: "1"
+vendor: Anthropic
+
+signatures:
+  - id: anthropic_claude_user
+    ua_contains: ["Claude-User"]
+    verdict: assistant_browse
+    confidence: 0.97
+    notes: "Live user-initiated fetch via Claude. High commercial intent."
+
+  - id: anthropic_claude_search
+    ua_contains: ["Claude-Search", "ClaudeSearchBot"]
+    verdict: crawler_search
+    confidence: 0.95
+    notes: "Claude search indexer."
+
+  - id: anthropic_claudebot
+    ua_contains: ["ClaudeBot"]
+    verdict: crawler_training
+    confidence: 0.95
+    notes: "Anthropic training crawler. Respects robots.txt."

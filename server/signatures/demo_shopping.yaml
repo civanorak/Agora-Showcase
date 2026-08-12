@@ -1,0 +1,14 @@
+version: "1-demo"
+vendor: demo
+_demo_only: true
+
+# DEMO-ONLY stub for shopping_agent verdict.
+# NOT a real vendor signature — no verified UA strings for shopping agents exist yet.
+# Loaded ONLY when AGORA_DEMO_MODE=1. Never deployed to production signature set.
+# Replace with real signatures once verified vendor UAs are documented. (M1)
+signatures:
+  - id: demo_shopping_agent_stub
+    ua_contains: ["ShoppingAgent/", "BuyBot/", "PurchaseAssist/"]
+    verdict: shopping_agent
+    confidence: 0.70
+    notes: "Demo stub only. Unverified UA strings."
