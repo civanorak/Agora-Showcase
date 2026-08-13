@@ -12,6 +12,7 @@ export default defineConfig({
       '/stats': { target: 'http://localhost:8000', changeOrigin: true },
       '/report': { target: 'http://localhost:8000', changeOrigin: true },
       '/sites': { target: 'http://localhost:8000', changeOrigin: true },
+      '/leads': { target: 'http://localhost:8000', changeOrigin: true },
       '/llms.txt': { target: 'http://localhost:8000', changeOrigin: true },
     },
   },

@@ -361,6 +361,16 @@ def parse_robots_txt(robots_content: str, path: str) -> tuple[bool, str]:
     return True, "robots.txt does not block known agent user-agents on this path"
 
 
+_CRAWLER_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 AGORA-Auditor/1.0"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9,tr;q=0.8",
+}
+
+
 @router.post(
     "/report/analyze",
     response_model=AnalyzeResponse,
@@ -368,14 +378,16 @@ def parse_robots_txt(robots_content: str, path: str) -> tuple[bool, str]:
 )
 async def analyze_url(req: AnalyzeRequest):
     url_str = req.url.strip()
+    if not url_str:
+        raise HTTPException(status_code=400, detail="URL cannot be empty")
     if not (url_str.startswith("http://") or url_str.startswith("https://")):
-        raise HTTPException(status_code=400, detail="Invalid URL scheme. Must be http:// or https://")
+        url_str = "https://" + url_str
 
-    # Fetch page once (Timeout 5s, Size cap 2MB). safe_stream re-validates the
+    # Fetch page once (Timeout 8s, Size cap 2MB). safe_stream re-validates the
     # target and every redirect hop, so an attacker cannot use a public URL that
     # redirects to an internal address to bypass the SSRF guard (D007-R).
     try:
-        async with httpx.AsyncClient(timeout=5.0) as client:
+        async with httpx.AsyncClient(timeout=8.0, headers=_CRAWLER_HEADERS) as client:
             async with safe_stream(client, "GET", url_str) as response:
                 response.raise_for_status()
                 content_length = response.headers.get("Content-Length")
@@ -459,7 +471,7 @@ async def analyze_url(req: AnalyzeRequest):
     llms_pass = False
     llms_evidence = ""
     try:
-        async with httpx.AsyncClient(timeout=3.0) as client:
+        async with httpx.AsyncClient(timeout=4.0, headers=_CRAWLER_HEADERS) as client:
             resp = await safe_get(client, llms_txt_url)
             if resp.status_code == 200 and len(resp.text.strip()) > 10:
                 llms_pass, llms_evidence = assess_llms_txt(resp.text)
@@ -490,7 +502,7 @@ async def analyze_url(req: AnalyzeRequest):
     robots_pass = True
     robots_evidence = "robots.txt does not block known agent user-agents on this path"
     try:
-        async with httpx.AsyncClient(timeout=3.0) as client:
+        async with httpx.AsyncClient(timeout=4.0, headers=_CRAWLER_HEADERS) as client:
             resp = await safe_get(client, robots_url)
             if resp.status_code == 200:
                 robots_pass, robots_evidence = parse_robots_txt(resp.text, parsed_url.path)

@@ -50,13 +50,19 @@ export default function App() {
   }
 
   const handleAudit = (url: string) => {
+    let targetUrl = url.trim()
+    if (!targetUrl) return
+    if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
+      targetUrl = 'https://' + targetUrl
+    }
+    setAuditUrl(targetUrl)
     setIsAuditLoading(true)
     setAuditError(null)
     setAuditResult(null)
     fetch(`${API}/report/analyze`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url }),
+      body: JSON.stringify({ url: targetUrl }),
     })
       .then(async r => {
         const text = await r.text()

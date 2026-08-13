@@ -188,11 +188,11 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
 
         <div style={{ display: 'flex', gap: '8px', marginTop: '12px', alignItems: 'center' }}>
           <span style={{ fontSize: '11px', color: '#a1a1aa' }}>Quick targets:</span>
-          <button className="qbtn" onClick={() => { onAuditUrlChange('http://localhost:8000'); onAudit('http://localhost:8000') }}>
-            Local API (Host)
+          <button className="qbtn" onClick={() => { onAuditUrlChange('https://books.toscrape.com'); onAudit('https://books.toscrape.com') }}>
+            Books to Scrape (Demo Store)
           </button>
-          <button className="qbtn" onClick={() => { onAuditUrlChange('http://localhost:8000/llms.txt'); onAudit('http://localhost:8000/llms.txt') }}>
-            Local /llms.txt
+          <button className="qbtn" onClick={() => { onAuditUrlChange('https://example.com'); onAudit('https://example.com') }}>
+            Example Domain
           </button>
         </div>
       </div>

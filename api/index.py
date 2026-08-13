@@ -6,6 +6,7 @@ routes (/health, /report/analyze, etc.) match correctly.
 """
 import os
 import sys
+import tempfile
 import traceback
 from pathlib import Path
 
@@ -13,13 +14,14 @@ from pathlib import Path
 # Force-set all config values for Vercel serverless.
 # Vercel auto-imports .env.example values which break pydantic_settings parsing
 # (especially AGORA_CORS_ORIGINS with embedded JSON quotes).
-os.environ["AGORA_SQLITE_PATH"] = "/tmp/agora.db"
+_tmp_db = os.environ.get("AGORA_SQLITE_PATH") or str(Path(tempfile.gettempdir()) / "agora.db")
+os.environ["AGORA_SQLITE_PATH"] = _tmp_db
 os.environ["AGORA_DEMO_MODE"] = "1"
 os.environ["AGORA_CORS_ORIGINS"] = '["*"]'
 os.environ["AGORA_LOG_LEVEL"] = "INFO"
 os.environ["AGORA_API_KEY_HASH_SALT"] = "vercel-showcase-demo-salt-not-for-production"
 os.environ["AGORA_ADMIN_TOKEN"] = ""
-os.environ["AGORA_DATABASE_URL"] = "sqlite:///tmp/agora.db"
+os.environ["AGORA_DATABASE_URL"] = f"sqlite:///{_tmp_db}"
 
 # ── 2. Fix Python path so `from app.xxx import ...` resolves ────────────
 _root = Path(__file__).resolve().parent.parent
@@ -71,7 +73,7 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 
 class _VercelASGIWrapper:
-    """Strips /api or /api/index prefix so FastAPI routes match,
+    """Strips /api, /api/index, or /api/index.py prefix so FastAPI routes match,
     and runs one-time cold-start initialization on first request."""
 
     def __init__(self, app: ASGIApp):
@@ -81,10 +83,35 @@ class _VercelASGIWrapper:
         if scope["type"] == "http":
             await _ensure_serverless_ready()
             path: str = scope.get("path", "")
-            if path.startswith("/api/index"):
-                scope["path"] = path[len("/api/index"):] or "/"
-            elif path.startswith("/api"):
-                scope["path"] = path[4:] or "/"
+
+            # If Vercel rewrote the URL to /api/index.py without subpath,
+            # inspect headers for the original matched path
+            if path in ("/api/index.py", "/api/index", "/api", "", "/"):
+                headers_dict = {}
+                for k, v in scope.get("headers", []):
+                    try:
+                        headers_dict[k.decode("latin1").lower()] = v.decode("latin1")
+                    except Exception:
+                        pass
+                matched = (
+                    headers_dict.get("x-matched-path")
+                    or headers_dict.get("x-vercel-matched-path")
+                    or headers_dict.get("x-forwarded-uri")
+                )
+                if matched:
+                    path = matched
+
+            # Strip serverless /api prefixes
+            for prefix in ("/api/index.py", "/api/index", "/api"):
+                if path.startswith(prefix):
+                    path = path[len(prefix):]
+                    break
+
+            if not path.startswith("/"):
+                path = "/" + path
+
+            scope["path"] = path
+
         await self.app(scope, receive, send)
 
 
