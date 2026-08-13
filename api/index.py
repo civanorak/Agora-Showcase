@@ -10,11 +10,16 @@ import traceback
 from pathlib import Path
 
 # ── 1. Environment setup (MUST happen before any app import) ────────────
-if "AGORA_SQLITE_PATH" not in os.environ:
-    os.environ["AGORA_SQLITE_PATH"] = "/tmp/agora.db"
-
-if "AGORA_DEMO_MODE" not in os.environ:
-    os.environ["AGORA_DEMO_MODE"] = "1"
+# Force-set all config values for Vercel serverless.
+# Vercel auto-imports .env.example values which break pydantic_settings parsing
+# (especially AGORA_CORS_ORIGINS with embedded JSON quotes).
+os.environ["AGORA_SQLITE_PATH"] = "/tmp/agora.db"
+os.environ["AGORA_DEMO_MODE"] = "1"
+os.environ["AGORA_CORS_ORIGINS"] = '["*"]'
+os.environ["AGORA_LOG_LEVEL"] = "INFO"
+os.environ["AGORA_API_KEY_HASH_SALT"] = "vercel-showcase-demo-salt-not-for-production"
+os.environ["AGORA_ADMIN_TOKEN"] = ""
+os.environ["AGORA_DATABASE_URL"] = "sqlite:///tmp/agora.db"
 
 # ── 2. Fix Python path so `from app.xxx import ...` resolves ────────────
 _root = Path(__file__).resolve().parent.parent
