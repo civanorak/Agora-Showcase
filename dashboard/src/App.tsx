@@ -58,18 +58,26 @@ export default function App() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url }),
     })
-      .then(r => {
-        if (!r.ok) {
-          return r.json().then(err => { throw new Error(err.detail || 'Failed to crawl page') })
+      .then(async r => {
+        const text = await r.text()
+        let data: any
+        try {
+          data = JSON.parse(text)
+        } catch {
+          if (!r.ok) throw new Error(`Server error (${r.status}). Please try again.`)
+          throw new Error('Invalid JSON response from server')
         }
-        return r.json()
+        if (!r.ok) {
+          throw new Error(data?.detail || 'Failed to crawl page')
+        }
+        return data as AuditResult
       })
       .then((d: AuditResult) => {
         setAuditResult(d)
         setCurrentTab('auditor')
       })
       .catch(e => {
-        setAuditError(e.message || 'Crawl request failed. Make sure target site is running.')
+        setAuditError(e.message || 'Crawl request failed.')
       })
       .finally(() => {
         setIsAuditLoading(false)
