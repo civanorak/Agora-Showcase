@@ -146,11 +146,22 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
         {isLoading ? (
           <div style={{ padding: '56px', textAlign: 'center', color: '#a1a1aa', fontSize: '13px' }}>Loading…</div>
         ) : total === 0 ? (
-          <div style={{ padding: '56px', textAlign: 'center' }}>
-            <div style={{ fontSize: '13px', color: '#71717a', marginBottom: '12px' }}>No requests yet.</div>
-            <code style={{ fontSize: '12px', color: '#52525b', background: '#f4f4f5', padding: '8px 14px', borderRadius: '5px', border: '1px solid #e4e4e7' }}>
-              python scripts/agent_sim.py --scenario demo
-            </code>
+          <div style={{ padding: '48px 24px', textAlign: 'center' }}>
+            <div style={{ fontSize: '14px', fontWeight: 600, color: '#09090b', marginBottom: '6px' }}>No requests recorded yet</div>
+            <div style={{ fontSize: '12.5px', color: '#71717a', marginBottom: '16px' }}>
+              Simulate AI agents visiting your store in real-time using the buttons below:
+            </div>
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+              {['chatgpt', 'claude', 'perplexity'].map(agent => (
+                <button key={agent} className="vbtn" onClick={() => onSimulate(agent)} style={{
+                  padding: '8px 16px', borderRadius: '6px', fontSize: '12px', fontWeight: 600,
+                  background: '#09090b', color: '#fff', border: 'none', cursor: 'pointer',
+                  display: 'inline-flex', alignItems: 'center', gap: '5px',
+                }}>
+                  🤖 Simulate {agent.charAt(0).toUpperCase() + agent.slice(1)}
+                </button>
+              ))}
+            </div>
           </div>
         ) : filteredEvents.length === 0 ? (
           <div style={{ padding: '40px', textAlign: 'center', color: '#a1a1aa', fontSize: '13px' }}>

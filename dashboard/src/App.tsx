@@ -147,7 +147,7 @@ export default function App() {
     let pollId: ReturnType<typeof setInterval> | null = null
 
     const startSSE = () => {
-      es = new EventSource('/events/stream')
+      es = new EventSource(`${API}/events/stream`)
       es.onmessage = (ev) => {
         try {
           const e: AgoraEvent = JSON.parse(ev.data)

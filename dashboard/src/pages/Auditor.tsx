@@ -203,6 +203,43 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
         </div>
       )}
 
+      {!auditResult && !isAuditLoading && !auditError && (
+        <div style={{
+          background: '#fff', border: '1px solid #e4e4e7', borderRadius: '12px',
+          padding: '40px 32px', textAlign: 'center', maxWidth: '720px', margin: '16px auto 0',
+        }}>
+          <div style={{ fontSize: '32px', marginBottom: '12px' }}>🔍</div>
+          <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#09090b', margin: '0 0 8px' }}>
+            Ready to audit your storefront
+          </h3>
+          <p style={{ fontSize: '13.5px', color: '#71717a', lineHeight: 1.6, margin: '0 0 24px', maxWidth: '540px', marginLeft: 'auto', marginRight: 'auto' }}>
+            Enter your storefront URL above or select a quick demo target. AGORA will crawl the site, measure token efficiency, test schema.org markup, check robots.txt bot rules, and generate a machine-readable <code>/llms.txt</code> file.
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
+            <button
+              className="vbtn"
+              onClick={() => { onAuditUrlChange('https://books.toscrape.com'); onAudit('https://books.toscrape.com') }}
+              style={{
+                padding: '10px 20px', borderRadius: '6px', fontSize: '13px', fontWeight: 600,
+                background: '#09090b', color: '#fff', border: 'none', cursor: 'pointer',
+              }}
+            >
+              🚀 Run Demo Audit (Books to Scrape)
+            </button>
+            <button
+              className="vbtn"
+              onClick={() => { onAuditUrlChange('https://example.com'); onAudit('https://example.com') }}
+              style={{
+                padding: '10px 20px', borderRadius: '6px', fontSize: '13px', fontWeight: 600,
+                background: '#f4f4f5', color: '#09090b', border: '1px solid #e4e4e7', cursor: 'pointer',
+              }}
+            >
+              📄 Try Example Domain
+            </button>
+          </div>
+        </div>
+      )}
+
       {auditResult && (
         <>
           {auditResult.catalog && (

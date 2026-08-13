@@ -65,6 +65,27 @@ async def _ensure_serverless_ready():
             "INSERT OR IGNORE INTO sites (id, name, api_key_hash) VALUES (?, ?, ?)",
             ("demo-site", "Demo Store", key_hash),
         )
+        # Seed initial demo events if table is empty
+        cursor = await db.execute("SELECT COUNT(*) as c FROM events WHERE site_id = 'demo-site'")
+        row = await cursor.fetchone()
+        if row and row["c"] == 0:
+            demo_events = [
+                ("GET", "/llms.txt", 200, "ChatGPT-User/1.0 (+https://openai.com/bot)", "assistant_browse", 0.97, '["ua_match:openai_chatgpt_user:chatgpt-user"]', "openai_chatgpt_user"),
+                ("GET", "/products/headphones", 200, "Mozilla/5.0 (compatible; ClaudeBot/1.0; +http://www.anthropic.com/claudebot)", "assistant_browse", 0.95, '["ua_match:anthropic_claudebot:claudebot"]', "anthropic_claudebot"),
+                ("GET", "/llms.txt", 200, "Mozilla/5.0 (compatible; PerplexityBot/1.0; +http://www.perplexity.ai/bot.html)", "crawler_search", 0.92, '["ua_match:perplexity_bot:perplexitybot"]', "perplexity_bot"),
+                ("GET", "/products/laptop", 200, "Mozilla/5.0 (compatible; GPTBot/1.0; +https://openai.com/gptbot)", "crawler_training", 0.90, '["ua_match:openai_gptbot:gptbot"]', "openai_gptbot"),
+                ("GET", "/sitemap.xml", 200, "Amazonbot/0.1 (+https://developer.amazon.com/support/amazonbot)", "shopping_agent", 0.88, '["ua_match:amazon_bot:amazonbot"]', "amazon_bot"),
+            ]
+            for method, path, status, ua, verdict, conf, evidence, sig_id in demo_events:
+                cur = await db.execute(
+                    "INSERT INTO events (site_id, ts, method, path, status, ua, ip_hash, headers, beacon_seen) VALUES (?, strftime('%Y-%m-%dT%H:%M:%SZ','now'), ?, ?, ?, ?, ?, ?, ?)",
+                    ("demo-site", method, path, status, ua, "a1b2c3d4e5f6", "{}", 0),
+                )
+                eid = cur.lastrowid
+                await db.execute(
+                    "INSERT INTO classifications (event_id, verdict, confidence, evidence, signature_id) VALUES (?, ?, ?, ?, ?)",
+                    (eid, verdict, conf, evidence, sig_id),
+                )
         await db.commit()
 
 
