@@ -1,29 +1,38 @@
 import aiosqlite
+import logging
 
 from .config import settings
 
+logger = logging.getLogger(__name__)
 _db: aiosqlite.Connection | None = None
+_initialized: bool = False
 
 
 async def get_db() -> aiosqlite.Connection:
-    global _db
+    global _db, _initialized
     if _db is None:
         _db = await aiosqlite.connect(settings.sqlite_path)
         _db.row_factory = aiosqlite.Row
-        await _db.execute("PRAGMA journal_mode=WAL")
+        try:
+            await _db.execute("PRAGMA journal_mode=WAL")
+        except Exception:
+            pass  # Fail open if WAL mode is not supported on serverless /tmp
         await _db.execute("PRAGMA foreign_keys=ON")
+    if not _initialized:
+        _initialized = True
+        await _create_tables(_db)
     return _db
 
 
 async def close_db() -> None:
-    global _db
+    global _db, _initialized
     if _db is not None:
         await _db.close()
         _db = None
+    _initialized = False
 
 
-async def init_db() -> None:
-    db = await get_db()
+async def _create_tables(db: aiosqlite.Connection) -> None:
     await db.executescript("""
         CREATE TABLE IF NOT EXISTS sites (
             id          TEXT PRIMARY KEY,
@@ -59,18 +68,23 @@ async def init_db() -> None:
 
         CREATE TABLE IF NOT EXISTS leads (
             id            INTEGER PRIMARY KEY AUTOINCREMENT,
+            site_id       TEXT NOT NULL DEFAULT 'demo-site',
             email         TEXT NOT NULL,
             url           TEXT,
             coverage_pct  REAL,
+            total_count   INTEGER,
             created_at    TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ','now'))
         );
 
         CREATE INDEX IF NOT EXISTS idx_leads_created ON leads (created_at DESC);
     """)
-    # Additive migrations for existing databases (SQLite has no
-    # ADD COLUMN IF NOT EXISTS, so we probe the schema first).
     await _ensure_column(db, "sites", "category", "category TEXT")
     await db.commit()
+
+
+async def init_db() -> None:
+    db = await get_db()
+    await _create_tables(db)
 
 
 async def _ensure_column(

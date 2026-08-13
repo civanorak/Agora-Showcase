@@ -54,6 +54,18 @@ _version: str = "unloaded"
 def load_signatures(directory: Path = SIGNATURES_DIR) -> int:
     global _signatures, _version
     loaded: list[Signature] = []
+    if not directory.exists():
+        for alt in [
+            Path(__file__).resolve().parent.parent / "signatures",
+            Path.cwd() / "server" / "signatures",
+            Path.cwd() / "signatures",
+        ]:
+            if alt.exists():
+                directory = alt
+                break
+    if not directory.exists():
+        logger.warning("Signatures directory not found: %s", directory)
+        return 0
     for path in sorted(directory.glob("*.yaml")):
         try:
             doc = yaml.safe_load(path.read_text(encoding="utf-8"))
