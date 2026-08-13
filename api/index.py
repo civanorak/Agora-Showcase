@@ -68,8 +68,8 @@ async def _ensure_serverless_ready():
         await db.commit()
 
 
-# ── 5. ASGI wrapper: strip /api prefix + cold-start init ───────────────
 from starlette.types import ASGIApp, Receive, Scope, Send
+from urllib.parse import parse_qs, urlencode
 
 
 class _VercelASGIWrapper:
@@ -84,8 +84,18 @@ class _VercelASGIWrapper:
             await _ensure_serverless_ready()
             path: str = scope.get("path", "")
 
-            # If Vercel rewrote the URL to /api/index.py without subpath,
-            # inspect headers for the original matched path
+            # 1. Check query parameter __path from vercel.json rewrite
+            query_raw = scope.get("query_string", b"").decode("latin1", "replace")
+            if "__path=" in query_raw:
+                qs = parse_qs(query_raw)
+                if "__path" in qs and qs["__path"]:
+                    extracted = qs["__path"][0]
+                    if extracted:
+                        path = extracted
+                    clean_qs = {k: v for k, v in qs.items() if k != "__path"}
+                    scope["query_string"] = urlencode(clean_qs, doseq=True).encode("latin1")
+
+            # 2. If path is generic /api/index.py, inspect headers
             if path in ("/api/index.py", "/api/index", "/api", "", "/"):
                 headers_dict = {}
                 for k, v in scope.get("headers", []):
@@ -101,7 +111,7 @@ class _VercelASGIWrapper:
                 if matched:
                     path = matched
 
-            # Strip serverless /api prefixes
+            # 3. Strip serverless /api prefixes
             for prefix in ("/api/index.py", "/api/index", "/api"):
                 if path.startswith(prefix):
                     path = path[len(prefix):]
