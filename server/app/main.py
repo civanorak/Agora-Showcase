@@ -1,8 +1,11 @@
 import hashlib
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 
 from .config import settings, verify_production_secrets
 from .crawler import router as crawler_router
@@ -38,9 +41,11 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="AGORA", version="0.1.0", lifespan=lifespan)
 
+origins = ["*"] if settings.demo_mode else settings.cors_origins
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -57,3 +62,22 @@ app.include_router(leads_router)
 @app.get("/health")
 async def health():
     return {"status": "ok", "version": "0.1.0"}
+
+
+# Fallback SPA & static asset handler for serverless / monorepo deployments
+_dist_dir = Path(__file__).resolve().parent.parent.parent / "dashboard" / "dist"
+if _dist_dir.exists():
+    _assets_dir = _dist_dir / "assets"
+    if _assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=str(_assets_dir)), name="assets")
+
+    @app.get("/{full_path:path}", response_class=HTMLResponse)
+    async def serve_spa(full_path: str = ""):
+        if full_path:
+            target_file = _dist_dir / full_path
+            if target_file.exists() and target_file.is_file():
+                return FileResponse(target_file)
+        index_file = _dist_dir / "index.html"
+        if index_file.exists():
+            return HTMLResponse(content=index_file.read_text(encoding="utf-8"))
+        return HTMLResponse(content="<h1>AGORA</h1>", status_code=404)
