@@ -1,18 +1,4 @@
 {
   "buildCommand": "cd dashboard && npm install && npm run build",
-  "outputDirectory": "dashboard/dist",
-  "rewrites": [
-    { "source": "/health", "destination": "/api/index" },
-    { "source": "/ingest", "destination": "/api/index" },
-    { "source": "/events/:path*", "destination": "/api/index" },
-    { "source": "/events", "destination": "/api/index" },
-    { "source": "/stats/:path*", "destination": "/api/index" },
-    { "source": "/stats", "destination": "/api/index" },
-    { "source": "/report/:path*", "destination": "/api/index" },
-    { "source": "/report", "destination": "/api/index" },
-    { "source": "/sites/:path*", "destination": "/api/index" },
-    { "source": "/sites", "destination": "/api/index" },
-    { "source": "/leads", "destination": "/api/index" },
-    { "source": "/llms.txt", "destination": "/api/index" }
-  ]
+  "outputDirectory": "dashboard/dist"
 }

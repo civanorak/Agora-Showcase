@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { AuditResult, CatalogInfo } from '../types'
 import { computeReadiness } from '../score'
+import { API } from '../api'
 
 // ── Plain-language, no-jargon copy ────────────────────────────────────────────
 // Her checklist maddesi için müşterinin anlayacağı başlık + sonuç cümlesi.
@@ -234,7 +235,7 @@ function EmailCapture({ url, coveragePct }: { url: string; coveragePct: number |
   const submit = () => {
     if (!email.trim()) return
     setStatus('submitting')
-    fetch('/leads', {
+    fetch(`${API}/leads`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, url, coverage_pct: coveragePct }),

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { AuditResult, CatalogInfo } from '../types'
 import { ChecklistItemView } from '../components/shared'
+import { API } from '../api'
 
 const SOURCE_LABEL: Record<string, string> = {
   products_json: 'Shopify /products.json',
@@ -78,7 +79,7 @@ function EmailCaptureCard({ url, coveragePct }: { url: string; coveragePct: numb
   const handleSubmit = () => {
     if (!email.trim()) return
     setStatus('submitting')
-    fetch('/leads', {
+    fetch(`${API}/leads`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, url, coverage_pct: coveragePct }),

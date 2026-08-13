@@ -6,6 +6,7 @@ import { Auditor } from './pages/Auditor'
 import { Intelligence } from './pages/Intelligence'
 import { Admin } from './pages/Admin'
 import { AgoraMark } from './components/AgoraMark'
+import { API } from './api'
 
 type Tab = 'landing' | 'feed' | 'auditor' | 'intelligence' | 'admin'
 
@@ -52,7 +53,7 @@ export default function App() {
     setIsAuditLoading(true)
     setAuditError(null)
     setAuditResult(null)
-    fetch('/report/analyze', {
+    fetch(`${API}/report/analyze`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url }),
@@ -76,7 +77,7 @@ export default function App() {
   }
 
   const fetchEvents = () => {
-    fetch('/events?limit=200')
+    fetch(`${API}/events?limit=200`)
       .then(r => { if (!r.ok) throw new Error(); return r.json() })
       .then((d: AgoraEvent[]) => {
         setEvents(d)
@@ -92,7 +93,7 @@ export default function App() {
   }
 
   const fetchStats = () => {
-    fetch(`/stats?site_id=${SITE_ID}&window=24h`)
+    fetch(`${API}/stats?site_id=${SITE_ID}&window=24h`)
       .then(r => r.ok ? r.json() : null)
       .then((d: StatsData | null) => { if (d) setStats(d) })
       .catch(() => {})
@@ -100,8 +101,8 @@ export default function App() {
 
   const fetchIntel = () => {
     Promise.allSettled([
-      fetch(`/stats/demand?site_id=${SITE_ID}&window=24h`).then(r => r.ok ? r.json() : null),
-      fetch(`/stats/benchmark?site_id=${SITE_ID}&window=24h`).then(r => r.ok ? r.json() : null),
+      fetch(`${API}/stats/demand?site_id=${SITE_ID}&window=24h`).then(r => r.ok ? r.json() : null),
+      fetch(`${API}/stats/benchmark?site_id=${SITE_ID}&window=24h`).then(r => r.ok ? r.json() : null),
     ])
       .then(([d, b]) => {
         if (d.status === 'fulfilled' && d.value) setDemand(d.value as DemandData)
@@ -111,7 +112,7 @@ export default function App() {
   }
 
   const triggerSimulation = (agent: string) => {
-    fetch(`/events/simulate?agent=${agent}`, { method: 'POST' })
+    fetch(`${API}/events/simulate?agent=${agent}`, { method: 'POST' })
       .then(r => {
         if (r.ok) {
           setTimeout(() => {

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { LeadSummary } from '../types'
+import { API } from '../api'
 
 const TOKEN_STORAGE_KEY = 'agora_admin_token'
 
@@ -17,7 +18,7 @@ export function Admin() {
   const loadLeads = () => {
     setStatus('loading')
     setError(null)
-    fetch('/leads', { headers: { Authorization: `Bearer ${token}` } })
+    fetch(`${API}/leads`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => {
         if (!r.ok) throw new Error(r.status === 403 ? 'Wrong admin token' : `Request failed (${r.status})`)
         return r.json()
