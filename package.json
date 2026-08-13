@@ -1,0 +1,7 @@
+{
+  "name": "agora-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "cd dashboard && npm install && npm run build"
+  }
+}
