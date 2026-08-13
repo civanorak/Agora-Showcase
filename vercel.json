@@ -1,58 +1,24 @@
 {
   "buildCommand": "cd dashboard && npm install && npm run build",
   "outputDirectory": "dashboard/dist",
-  "rewrites": [
-    {
-      "source": "/health",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/ingest",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/events/(.*)",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/events",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/stats/(.*)",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/stats",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/report/(.*)",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/report",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/sites/(.*)",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/sites",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/leads",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/llms.txt",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
+  "functions": {
+    "api/index.py": {
+      "runtime": "@vercel/python@4",
+      "maxDuration": 30
     }
+  },
+  "rewrites": [
+    { "source": "/health", "destination": "/api/index" },
+    { "source": "/ingest", "destination": "/api/index" },
+    { "source": "/events/:path*", "destination": "/api/index" },
+    { "source": "/events", "destination": "/api/index" },
+    { "source": "/stats/:path*", "destination": "/api/index" },
+    { "source": "/stats", "destination": "/api/index" },
+    { "source": "/report/:path*", "destination": "/api/index" },
+    { "source": "/report", "destination": "/api/index" },
+    { "source": "/sites/:path*", "destination": "/api/index" },
+    { "source": "/sites", "destination": "/api/index" },
+    { "source": "/leads", "destination": "/api/index" },
+    { "source": "/llms.txt", "destination": "/api/index" }
   ]
 }
