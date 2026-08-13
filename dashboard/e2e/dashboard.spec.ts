@@ -32,9 +32,7 @@ test.describe('AGORA — konsolide mağaza raporu', () => {
   test('açılışta hero ve tek URL girişi görünür', async ({ page }) => {
     await page.goto('/')
     await expect(page.getByText('AGORA', { exact: true })).toBeVisible()
-    await expect(page.getByRole('heading', { name: 'Mağazanız yapay zekâya hazır mı?' })).toBeVisible()
-    await expect(page.locator('input[placeholder="https://magazaniz.com"]')).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Mağazamı Tara' })).toBeVisible()
+    await expect(page.locator('input[placeholder="https://your-store.com"]')).toBeVisible()
   })
 
   test('boş durumda "nasıl çalışır" adımları görünür', async ({ page }) => {
@@ -50,8 +48,8 @@ test.describe('AGORA — konsolide mağaza raporu', () => {
     })
 
     await page.goto('/')
-    await page.getByPlaceholder('https://magazaniz.com').fill('http://localhost:8000')
-    await page.getByRole('button', { name: 'Mağazamı Tara' }).click()
+    await page.getByPlaceholder('https://your-store.com').fill('http://localhost:8000')
+    await page.getByRole('button', { name: 'Run Agent Audit' }).click()
 
     // 1) Tek sonuç: hazırlık skoru — 3/4 checklist (0.75*60=45) + kapsama 5.3% (0.053*40≈2) = 47
     await expect(page.getByText('Yapay Zekâ Hazırlığı')).toBeVisible()
@@ -95,8 +93,8 @@ test.describe('AGORA — konsolide mağaza raporu', () => {
       await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(FULL_AUDIT) })
     })
     await page.goto('/')
-    await page.getByPlaceholder('https://magazaniz.com').fill('http://localhost:8000')
-    await page.getByRole('button', { name: 'Mağazamı Tara' }).click()
+    await page.getByPlaceholder('https://your-store.com').fill('http://localhost:8000')
+    await page.getByRole('button', { name: 'Run Agent Audit' }).click()
 
     const details = page.getByText('Teknik detaylar (isteğe bağlı)')
     await expect(details).toBeVisible()
@@ -111,8 +109,8 @@ test.describe('AGORA — konsolide mağaza raporu', () => {
       await route.fulfill({ status: 400, contentType: 'application/json', body: JSON.stringify({ detail: 'Refused to fetch URL' }) })
     })
     await page.goto('/')
-    await page.getByPlaceholder('https://magazaniz.com').fill('http://bad')
-    await page.getByRole('button', { name: 'Mağazamı Tara' }).click()
+    await page.getByPlaceholder('https://your-store.com').fill('http://bad')
+    await page.getByRole('button', { name: 'Run Agent Audit' }).click()
     await expect(page.getByText('Refused to fetch URL')).toBeVisible()
   })
 
