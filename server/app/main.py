@@ -107,8 +107,8 @@ async def root():
 
 @app.get("/{full_path:path}", response_class=HTMLResponse)
 async def catch_all_spa(full_path: str = ""):
-    # Do not intercept API endpoints
-    if any(full_path.startswith(prefix) for prefix in ["api/", "health", "report", "events", "stats", "sites", "leads", "ingest"]):
+    # Do not intercept API or static asset endpoints
+    if any(full_path.startswith(prefix) for prefix in ["api/", "assets/", "health", "report", "events", "stats", "sites", "leads", "ingest"]):
         return HTMLResponse(content='{"detail":"Not Found"}', status_code=404)
 
     if full_path and _dist_dir.exists():
