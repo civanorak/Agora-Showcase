@@ -1,74 +1,54 @@
 {
-  "version": 2,
-  "builds": [
+  "buildCommand": "cd dashboard && npm install && npm run build",
+  "outputDirectory": "dashboard/dist",
+  "rewrites": [
     {
-      "src": "api/index.py",
-      "use": "@vercel/python"
+      "source": "/health",
+      "destination": "/api/index.py"
     },
     {
-      "src": "dashboard/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/health",
-      "dest": "api/index.py"
+      "source": "/ingest",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/ingest",
-      "dest": "api/index.py"
+      "source": "/events/(.*)",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/events/(.*)",
-      "dest": "api/index.py"
+      "source": "/events",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/events",
-      "dest": "api/index.py"
+      "source": "/stats/(.*)",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/stats/(.*)",
-      "dest": "api/index.py"
+      "source": "/stats",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/stats",
-      "dest": "api/index.py"
+      "source": "/report/(.*)",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/report/(.*)",
-      "dest": "api/index.py"
+      "source": "/report",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/report",
-      "dest": "api/index.py"
+      "source": "/sites/(.*)",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/sites/(.*)",
-      "dest": "api/index.py"
+      "source": "/sites",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/sites",
-      "dest": "api/index.py"
+      "source": "/leads",
+      "destination": "/api/index.py"
     },
     {
-      "src": "/leads",
-      "dest": "api/index.py"
-    },
-    {
-      "src": "/llms.txt",
-      "dest": "api/index.py"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "dashboard/dist/assets/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "dashboard/dist/$1"
+      "source": "/llms.txt",
+      "destination": "/api/index.py"
     }
   ]
 }
