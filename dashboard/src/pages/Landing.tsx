@@ -56,6 +56,25 @@ export function Landing({
     { title: t('robots.txt configuration', 'robots.txt yapılandırması'), desc: t('Verifies you are not accidentally blocking the exact agents that bring buyers.', 'Alıcı getiren ajanları yanlışlıkla engellemediğinizi doğrular.') },
   ]
 
+  // Every figure here is published by Cloudflare Radar (2025–2026) — no estimates.
+  const shiftStats = [
+    {
+      value: '~20%',
+      label: t('of all verified bot traffic is now AI crawlers', 'tüm doğrulanmış bot trafiği artık AI tarayıcıları'),
+      note: t('Two years ago this was near zero.', 'İki yıl önce bu neredeyse sıfırdı.'),
+    },
+    {
+      value: '12% · 9%',
+      label: t('of global bot traffic is GPTBot and ClaudeBot', 'küresel bot trafiği GPTBot ve ClaudeBot’a ait'),
+      note: t('Right behind Googlebot (48%).', 'Googlebot’un (%48) hemen arkasında.'),
+    },
+    {
+      value: '4,580 : 1',
+      label: t('pages Anthropic’s agent reads for every 1 visitor it sends back', 'Anthropic’in ajanının geri gönderdiği her 1 ziyaretçi için okuduğu sayfa'),
+      note: t('That one visit only happens if it could read you.', 'O tek ziyaret, ancak sizi okuyabilirse gerçekleşir.'),
+    },
+  ]
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '88px' }}>
 
@@ -75,8 +94,8 @@ export function Landing({
 
           <p style={{ fontSize: '16px', color: '#52525b', lineHeight: 1.65, margin: '0 0 32px', maxWidth: '480px' }}>
             {t(
-              "AI assistants are already browsing your store — and your analytics can't see them. AGORA detects every agent visit at the request level and turns your catalog into something agents can actually read.",
-              'AI asistanları mağazanızı çoktan geziyor — ve analitiğiniz onları göremiyor. AGORA her ajan ziyaretini istek düzeyinde tespit eder ve kataloğunuzu ajanların gerçekten okuyabileceği bir şeye dönüştürür.',
+              "When a shopper asks ChatGPT “where can I buy this,” an AI agent quietly visits your store to answer — but it can't run your JavaScript, so it never sees your products. AGORA reveals those visits and rewrites your catalog into a single file agents can actually read.",
+              'Bir alıcı ChatGPT’ye “bunu nereden alabilirim” diye sorduğunda, cevabı bulmak için mağazanıza sessizce bir AI ajanı uğrar — ama JavaScript’inizi çalıştıramadığından ürünlerinizi hiç göremez. AGORA bu ziyaretleri gözler önüne serer ve kataloğunuzu, ajanların gerçekten okuyabileceği tek bir dosyaya dönüştürür.',
             )}
           </p>
 
@@ -224,15 +243,74 @@ export function Landing({
         </div>
       </section>
 
+      {/* ── The shift: why this matters now (real Cloudflare data) ── */}
+      <section style={{
+        display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', alignItems: 'center',
+      }}>
+        <div>
+          <span style={{ fontSize: '10px', fontWeight: 700, color: '#b45309', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '12px' }}>
+            {t('Why now', 'Neden şimdi')}
+          </span>
+          <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#09090b', margin: '0 0 20px', letterSpacing: '-0.02em', lineHeight: 1.15 }}>
+            {t('Your traffic is quietly changing hands', 'Trafiğiniz sessizce el değiştiriyor')}
+          </h2>
+          <p style={{ fontSize: '14.5px', color: '#52525b', lineHeight: 1.7, margin: '0 0 16px' }}>
+            {t(
+              'For twenty years, customers found you on Google and clicked. Now they ask an assistant — “find me waterproof hiking boots under $150” — and the assistant answers from the stores it can read.',
+              'Yirmi yıl boyunca müşteriler sizi Google’da bulup tıkladı. Artık bir asistana soruyorlar — “150 doların altında su geçirmez bot bul” — ve asistan, okuyabildiği mağazalardan cevap veriyor.',
+            )}
+          </p>
+          <p style={{ fontSize: '14.5px', color: '#52525b', lineHeight: 1.7, margin: 0 }}>
+            {t(
+              'It doesn’t browse like a person. It fetches your raw HTML, parses it, and quotes what it finds. If your products render from a JavaScript bundle, the agent sees an empty page — and recommends a competitor it could read instead.',
+              'Bir insan gibi gezmez. Ham HTML’inizi çeker, ayrıştırır ve bulduğunu alıntılar. Ürünleriniz bir JavaScript paketinden yükleniyorsa, ajan boş bir sayfa görür — ve yerine okuyabildiği bir rakibi önerir.',
+            )}
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          {shiftStats.map((s, i) => (
+            <div key={i} style={{
+              border: '1px solid #e4e4e7', borderLeft: '3px solid #f59e0b', borderRadius: '10px',
+              background: '#fff', padding: '18px 22px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '14px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '30px', fontWeight: 800, color: '#09090b', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
+                  {s.value}
+                </span>
+                <span style={{ fontSize: '13px', color: '#3f3f46', lineHeight: 1.45, flex: 1, minWidth: '160px' }}>
+                  {s.label}
+                </span>
+              </div>
+              <div style={{ fontSize: '11.5px', color: '#a1a1aa', marginTop: '8px' }}>{s.note}</div>
+            </div>
+          ))}
+          <a
+            href="https://blog.cloudflare.com/ai-search-crawl-refer-ratio-on-radar/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ fontSize: '11px', color: '#71717a', textDecoration: 'none', marginTop: '2px' }}
+          >
+            {t('Source: Cloudflare Radar, 2025–2026 →', 'Kaynak: Cloudflare Radar, 2025–2026 →')}
+          </a>
+        </div>
+      </section>
+
       {/* ── How it works ── */}
       <section>
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
           <span style={{ fontSize: '10px', fontWeight: 700, color: '#09090b', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '8px' }}>
             {t('How it works', 'Nasıl çalışır')}
           </span>
-          <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#09090b', margin: 0, letterSpacing: '-0.02em' }}>
+          <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#09090b', margin: '0 0 14px', letterSpacing: '-0.02em' }}>
             {t('See. Be readable. Then sell.', 'Gör. Okunabilir ol. Sonra sat.')}
           </h2>
+          <p style={{ fontSize: '14px', color: '#71717a', lineHeight: 1.6, margin: '0 auto', maxWidth: '620px' }}>
+            {t(
+              '/llms.txt is a plain-text version of your catalog — the same idea as robots.txt or a sitemap, but written for AI assistants. One file, product names and prices in plain lines, no JavaScript to run. AGORA writes it for you and shows you which agents read it.',
+              '/llms.txt, kataloğunuzun düz metin sürümüdür — robots.txt veya site haritasıyla aynı fikir, ama AI asistanları için yazılmış. Tek dosya; ürün adları ve fiyatlar sade satırlarda, çalıştırılacak JavaScript yok. AGORA bunu sizin için yazar ve hangi ajanların okuduğunu gösterir.',
+            )}
+          </p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
