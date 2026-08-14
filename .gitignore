@@ -44,3 +44,5 @@ graphify-out/
 scripts/audit_details.json
 scripts/targets.txt
 scripts/orkestra_candidates.csv
+.vercel
+.env*
