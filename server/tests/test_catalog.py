@@ -7,6 +7,7 @@ import pytest
 from app.catalog import (
     CatalogProduct,
     CatalogSource,
+    _sample_candidate_urls,
     count_visible_products,
     filter_product_urls,
     normalize_domain,
@@ -95,6 +96,68 @@ async def test_scan_catalog_products_json_paginated():
     assert result.source == CatalogSource.PRODUCTS_JSON
     assert result.total_count == 1
     assert result.products[0].name == "Demo Keycap Set"
+
+
+def test_sample_candidate_urls_drops_cms_and_strides():
+    """Flat mixed sitemap (Ticimax/ideasoft/ikas): homepage + CMS pages dropped,
+    the rest strided so the sample lands across the product-dense tail, not just
+    the CMS-heavy head."""
+    urls = (
+        ["https://s.example/"]  # bare homepage → dropped
+        + ["https://s.example/iletisim", "https://s.example/kargo-secenekleri"]  # CMS → dropped
+        + [f"https://s.example/kolye-{i}" for i in range(100)]  # slug-style products
+    )
+    sample = _sample_candidate_urls(urls, sample_size=10)
+    assert len(sample) == 10
+    assert all("/kolye-" in u for u in sample)  # homepage + CMS excluded
+    # Strided, not the first 10 — the last pick reaches deep into the product tail.
+    assert sample[-1] != "https://s.example/kolye-9"
+
+
+@pytest.mark.asyncio
+async def test_scan_catalog_flat_sitemap_enriches_via_jsonld():
+    """A Ticimax-style store: no /products.json, one flat sitemap whose product
+    URLs are slug-style (no /urun/ segment). The path filter matches nothing, so
+    the scanner must sample + JSON-LD-verify and surface real products."""
+    flat_sitemap = (
+        '<?xml version="1.0"?>'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+        "<url><loc>https://tstore.example/iletisim</loc></url>"
+        + "".join(
+            f"<url><loc>https://tstore.example/kuromi-cuzdan-{i}</loc></url>"
+            for i in range(5)
+        )
+        + "</urlset>"
+    )
+    product_html = (
+        "<html><head>"
+        '<script type="application/ld+json">'
+        '{"@type":"Product","name":"Kuromi Anahtarlik Cuzdan",'
+        '"offers":{"price":"210.00"}}'
+        "</script></head><body></body></html>"
+    )
+
+    async def fake_get(self, url, *args, **kwargs):
+        if "products.json" in url:
+            return MagicMock(status_code=404, headers={"content-type": "text/html"})
+        if url.endswith("/sitemap.xml"):
+            return MagicMock(
+                status_code=200, text=flat_sitemap, headers={"content-type": "application/xml"}
+            )
+        return MagicMock(
+            status_code=200, text=product_html, headers={"content-type": "text/html"}
+        )
+
+    with patch("httpx.AsyncClient.get", new=fake_get):
+        result = await scan_catalog("https://tstore.example")
+
+    assert result.source == CatalogSource.SITEMAP
+    assert result.found
+    # Honest count: a flat mixed sitemap gives no trustworthy total, so we report
+    # exactly the products we JSON-LD-verified — never an inflated URL count.
+    assert result.total_count == len(result.products)
+    assert any("Kuromi" in p.name for p in result.products)
+    assert result.products[0].price == 210.0
 
 
 @pytest.mark.asyncio

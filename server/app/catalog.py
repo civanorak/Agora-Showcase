@@ -33,6 +33,19 @@ _PRODUCT_PATH_RE = re.compile(r"/(?:product|products|p|urun|urunler)/", re.IGNOR
 # ideasoft and ticimax use flat product URLs (/gamesir-t4-pro) with no
 # /product/ path segment, and the path filter would silently drop all of them.
 _PRODUCT_SITEMAP_RE = re.compile(r"(?:product|urun)", re.IGNORECASE)
+# Obvious non-product pages that every storefront sitemap carries: policy,
+# account, help and checkout routes. Used to prune a flat mixed sitemap before
+# sampling, so the JSON-LD enrichment budget is not spent on CMS pages. Product
+# slugs that happen to contain one of these tokens are rare and get restored by
+# the enrichment step (which keeps only pages with schema.org/Product markup).
+_CMS_URL_RE = re.compile(
+    r"/(?:iletisim|hakkimizda|hakkinda|giris|uye|uyelik|kvkk|gizlilik|sozlesme|"
+    r"kosul|kurallar|kargo|iade|degisim|teslimat|odeme|guvenlik|yardim|sss|"
+    r"siparis|musteri-hizmetleri|magazalar|blog|hesap|favori|sepet|"
+    r"about|contact|privacy|terms|shipping|return|faq|help|account|login|"
+    r"register|cart|wishlist|checkout)",
+    re.IGNORECASE,
+)
 # Strip the XML namespace prefix so tag matching works on every sitemap dialect.
 _NS_STRIP = re.compile(r"^\{[^}]+\}")
 _DOUBLE_SPACE_RE = re.compile(r" {2,}")
@@ -181,6 +194,33 @@ def _looks_like_product_sitemap(sitemap_url: str) -> bool:
     return bool(_PRODUCT_SITEMAP_RE.search(urlparse(sitemap_url).path))
 
 
+def _sample_candidate_urls(
+    urls: list[str], sample_size: int = None  # type: ignore[assignment]
+) -> list[str]:
+    """Pick a bounded, product-biased sample from a flat mixed sitemap.
+
+    Turkish e-commerce platforms (Ticimax, ideasoft, ikas) publish one flat
+    <urlset> where product URLs are slug-style (/hello-kitty-cuzdan) with no
+    /urun/ or /product/ path segment, so `filter_product_urls` drops them all.
+    Here we instead prune the obvious CMS/account/policy pages and the bare
+    homepage, then take an evenly-strided sample. Products cluster in the tail
+    (after CMS + category URLs), so striding — rather than taking the first N —
+    lands the enrichment budget on real product pages. Category pages swept in
+    by the stride carry no schema.org/Product markup and are discarded by the
+    JSON-LD enrichment step downstream."""
+    if sample_size is None:
+        sample_size = _SITEMAP_ENRICH_LIMIT
+    candidates = [
+        u
+        for u in urls
+        if urlparse(u).path.strip("/") and not _CMS_URL_RE.search(urlparse(u).path)
+    ]
+    if len(candidates) <= sample_size:
+        return candidates
+    stride = len(candidates) / sample_size
+    return [candidates[int(i * stride)] for i in range(sample_size)]
+
+
 async def _fetch_text(client: httpx.AsyncClient, url: str) -> str | None:
     try:
         resp = await client.get(url)
@@ -196,22 +236,32 @@ async def _collect_all_product_urls(
     sitemap_url: str,
     *,
     max_children: int = 8,
-) -> list[str]:
-    """Resolve a sitemap entry point into a flat list of product URLs.
+) -> tuple[list[str], bool]:
+    """Resolve a sitemap entry point into product URLs.
 
-    Handles both shapes served in the wild: flat <urlset> and <sitemapindex>
-    (one recursion level, product-flavored children first)."""
+    Returns (urls, confirmed). When confirmed is True every URL is known to be a
+    product page (product-named sitemap or path-filter match), so the caller can
+    trust len(urls) as the catalog size. When False the URLs are a product-biased
+    *sample* of a flat mixed sitemap that must be JSON-LD-verified before any of
+    them counts — the true total is unknown, so the caller reports only what it
+    can verify. Handles both shapes served in the wild: flat <urlset> and
+    <sitemapindex> (one recursion level, product-flavored children first)."""
     xml_text = await _fetch_text(client, sitemap_url)
     if not xml_text:
-        return []
+        return [], True
 
     if not is_sitemap_index(xml_text):
         locs = parse_sitemap_urls(xml_text)
-        # A dedicated products feed lists only product pages, so keep every URL;
-        # otherwise fall back to the path heuristic for mixed sitemaps.
+        # A dedicated products feed lists only product pages, so keep every URL.
         if _looks_like_product_sitemap(sitemap_url):
-            return locs
-        return filter_product_urls(locs)
+            return locs, True
+        filtered = filter_product_urls(locs)
+        if filtered:
+            return filtered, True
+        # Flat mixed sitemap with slug-style product URLs (Ticimax/ideasoft/ikas):
+        # the path filter matched nothing. Sample for JSON-LD verification instead
+        # of giving up — otherwise the whole catalog is invisible to the audit.
+        return _sample_candidate_urls(locs), False
 
     child_urls = parse_sitemap_urls(xml_text)
     child_urls.sort(key=lambda u: 0 if "product" in u.lower() else 1)
@@ -227,7 +277,7 @@ async def _collect_all_product_urls(
             aggregated.extend(filter_product_urls(child_locs))
         if len(aggregated) >= 1000:
             break
-    return aggregated
+    return aggregated, True
 
 
 # ── JSON-LD product enrichment (non-Shopify sitemap sources) ─────────────────
@@ -362,6 +412,68 @@ def parse_shopify_products(products: list[dict], domain: str) -> list[CatalogPro
 
 # ── Main scanner ──────────────────────────────────────────────────────────────
 
+def _host_variants(domain_or_url: str, host: str) -> list[str]:
+    """Both www and apex spellings of the host, caller's spelling tried first.
+
+    scan_catalog fetches with redirects OFF (SSRF guard), but storefronts are
+    canonical on exactly one of www/apex and 301 the other. Fetching only the
+    www-stripped host silently loses every www-canonical store (the apex 301s to
+    www and the redirect is dropped). Trying both self-computed spellings of the
+    SAME registrable domain restores those catalogs without following any
+    server-controlled redirect — so the SSRF guarantee is unchanged."""
+    lower = domain_or_url.strip().lower()
+    had_www = lower.startswith("www.") or "://www." in lower
+    www, apex = f"www.{host}", host
+    return [www, apex] if had_www else [apex, www]
+
+
+async def _scan_single_host(client: httpx.AsyncClient, host: str) -> CatalogScan:
+    """Run the /products.json → sitemap fallback against one host spelling."""
+    try:
+        raw_products = await _fetch_products_json_paginated(host, client)
+    except Exception:
+        raw_products = []
+
+    if raw_products:
+        entries = parse_shopify_products(raw_products, host)
+        return CatalogScan(
+            products=entries,
+            total_count=len(entries),
+            source=CatalogSource.PRODUCTS_JSON,
+        )
+
+    try:
+        urls, confirmed = await _collect_all_product_urls(
+            client, f"https://{host}/sitemap.xml"
+        )
+    except Exception:
+        urls, confirmed = [], True
+
+    if urls:
+        # A sampled JSON-LD enrichment fills in names/prices so the llms.txt can
+        # list real products instead of falling back to page markdown.
+        try:
+            products = await _enrich_products_from_pages(client, urls)
+        except Exception:
+            products = []
+        if confirmed:
+            # Path-verified product URLs: len(urls) is the true catalog size.
+            total_count = len(urls)
+        else:
+            # Flat mixed sitemap: only the JSON-LD-verified sample is trusted.
+            # No products confirmed → no catalog (fail-open), never guess a total.
+            if not products:
+                return CatalogScan()
+            total_count = len(products)
+        return CatalogScan(
+            products=products,
+            total_count=total_count,
+            source=CatalogSource.SITEMAP,
+        )
+
+    return CatalogScan()
+
+
 async def scan_catalog(domain_or_url: str) -> CatalogScan:
     """Fetch the structured catalog: /products.json first, sitemap fallback.
 
@@ -376,37 +488,10 @@ async def scan_catalog(domain_or_url: str) -> CatalogScan:
     async with httpx.AsyncClient(
         timeout=_TIMEOUT, headers=_HEADERS, follow_redirects=False
     ) as client:
-        try:
-            raw_products = await _fetch_products_json_paginated(host, client)
-        except Exception:
-            raw_products = []
-
-        if raw_products:
-            entries = parse_shopify_products(raw_products, host)
-            return CatalogScan(
-                products=entries,
-                total_count=len(entries),
-                source=CatalogSource.PRODUCTS_JSON,
-            )
-
-        try:
-            urls = await _collect_all_product_urls(client, f"https://{host}/sitemap.xml")
-        except Exception:
-            urls = []
-
-        if urls:
-            # Sitemap gives the true catalog size (total_count); a sampled
-            # JSON-LD enrichment fills in names/prices so the llms.txt can list
-            # real products instead of falling back to page markdown.
-            try:
-                products = await _enrich_products_from_pages(client, urls)
-            except Exception:
-                products = []
-            return CatalogScan(
-                products=products,
-                total_count=len(urls),
-                source=CatalogSource.SITEMAP,
-            )
+        for candidate_host in _host_variants(domain_or_url, host):
+            scan = await _scan_single_host(client, candidate_host)
+            if scan.found:
+                return scan
 
     return CatalogScan()
 
