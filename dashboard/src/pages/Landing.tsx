@@ -1,4 +1,4 @@
-import { AgoraMark } from '../components/AgoraMark'
+import { BrandBadge } from '../components/BrandBadge'
 import { useI18n } from '../i18n'
 
 interface LandingProps {
@@ -85,7 +85,7 @@ export function Landing({
       }}>
         <div>
           <div style={{ marginBottom: '24px' }}>
-            <AgoraMark size={44} tone="light" />
+            <BrandBadge size={52} />
           </div>
 
           <h1 style={{ fontSize: '48px', fontWeight: 800, color: '#09090b', lineHeight: 1.05, margin: '0 0 20px', letterSpacing: '-0.03em' }}>

@@ -5,7 +5,7 @@ import { Feed } from './pages/Feed'
 import { Auditor } from './pages/Auditor'
 import { Intelligence } from './pages/Intelligence'
 import { Admin } from './pages/Admin'
-import { AgoraMark } from './components/AgoraMark'
+import { BrandBadge } from './components/BrandBadge'
 import { LanguageToggle } from './components/LanguageToggle'
 import { useI18n } from './i18n'
 import { API } from './api'
@@ -212,13 +212,20 @@ export default function App() {
       {/* ── App bar: brand left, nav right ── */}
       <header style={{ background: '#09090b', position: 'sticky', top: 0, zIndex: 10 }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 32px', height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '24px' }}>
-          {/* brand */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '11px', flexShrink: 0 }}>
-            <AgoraMark size={24} />
+          {/* brand — click returns to the Overview / landing page */}
+          <button
+            onClick={() => setCurrentTab('landing')}
+            aria-label={t('Go to home', 'Ana sayfaya git')}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0,
+              background: 'transparent', border: 'none', padding: 0, cursor: 'pointer',
+            }}
+          >
+            <BrandBadge size={28} />
             <span style={{ fontSize: '15px', fontWeight: 700, color: '#fafafa', letterSpacing: '-0.02em' }}>AGORA</span>
             <span style={{ width: '1px', height: '15px', background: '#27272a' }} />
             <span style={{ fontSize: '12px', color: '#71717a', letterSpacing: '0.01em' }}>{t('AI Traffic Analytics', 'AI Trafik Analitiği')}</span>
-          </div>
+          </button>
           {/* nav + language switch */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
           <nav style={{ display: 'flex', alignItems: 'center', gap: '4px', overflowX: 'auto' }}>
