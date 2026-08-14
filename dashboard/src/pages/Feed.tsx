@@ -3,6 +3,7 @@ import type { AgoraEvent, StatsData } from '../types'
 import { AI_VERDICTS, VERDICT_STYLE } from '../verdicts'
 import { AgentBadge, EvidenceChips, StatCard, StatusChip, TrafficBar } from '../components/shared'
 import { TimeSeriesChart } from '../components/TimeSeriesChart'
+import { useI18n } from '../i18n'
 
 interface FeedProps {
   events: AgoraEvent[]
@@ -14,6 +15,7 @@ interface FeedProps {
 }
 
 export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate }: FeedProps) {
+  const { t } = useI18n()
   const [hoveredRow, setHoveredRow] = useState<number | null>(null)
   const [filterVerdicts, setFilterVerdicts] = useState<Set<string>>(new Set())
   const [pathQuery, setPathQuery] = useState('')
@@ -43,12 +45,12 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
     <>
       <div style={{ marginBottom: '28px' }}>
         <h1 style={{ fontSize: '20px', fontWeight: 700, color: '#09090b', margin: 0, letterSpacing: '-0.02em' }}>
-          Live Request Feed
+          {t('Live Request Feed', 'Canlı İstek Akışı')}
         </h1>
         <p style={{ fontSize: '13px', color: '#71717a', margin: '5px 0 0', lineHeight: 1.5 }}>
-          Classifier v1 active
-          {streamMode === 'sse' ? ' · Live stream' : ' · Polling every 3s'}
-          {total > 0 && ` · ${total} events in window`}
+          {t('Classifier v1 active', 'Sınıflandırıcı v1 aktif')}
+          {streamMode === 'sse' ? t(' · Live stream', ' · Canlı akış') : t(' · Polling every 3s', ' · 3 sn’de bir yoklama')}
+          {total > 0 && t(` · ${total} events in window`, ` · pencerede ${total} olay`)}
         </p>
       </div>
 
@@ -59,8 +61,8 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px',
       }}>
         <div>
-          <div style={{ fontSize: '13.5px', fontWeight: 700, color: '#09090b' }}>AI Agent Simulator (Sandbox)</div>
-          <div style={{ fontSize: '11.5px', color: '#71717a', marginTop: '3px' }}>Simulate AI bots visiting your store to test live detection in real-time.</div>
+          <div style={{ fontSize: '13.5px', fontWeight: 700, color: '#09090b' }}>{t('AI Agent Simulator (Sandbox)', 'AI Ajan Simülatörü (Deneme)')}</div>
+          <div style={{ fontSize: '11.5px', color: '#71717a', marginTop: '3px' }}>{t('Simulate AI bots visiting your store to test live detection in real-time.', 'Canlı tespiti gerçek zamanlı test etmek için mağazanızı ziyaret eden AI botlarını simüle edin.')}</div>
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
           {['chatgpt', 'claude', 'perplexity'].map(agent => (
@@ -76,12 +78,12 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
 
       {/* ── Stat cards ── */}
       <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
-        <StatCard label="Total Requests"   value={total} />
-        <StatCard label="AI Traffic"       value={aiCount}
-          note={total ? `${Math.round(aiCount / total * 100)}% of all traffic` : undefined} />
-        <StatCard label="Assistant Browse" value={assistants}
+        <StatCard label={t('Total Requests', 'Toplam İstek')}   value={total} />
+        <StatCard label={t('AI Traffic', 'AI Trafiği')}       value={aiCount}
+          note={total ? t(`${Math.round(aiCount / total * 100)}% of all traffic`, `tüm trafiğin %${Math.round(aiCount / total * 100)}’i`) : undefined} />
+        <StatCard label={t('Assistant Browse', 'Asistan Gezinme')} value={assistants}
           note={total ? `${Math.round(assistants / total * 100)}%` : undefined} />
-        <StatCard label="Crawlers"         value={crawlers}
+        <StatCard label={t('Crawlers', 'Tarayıcılar')}         value={crawlers}
           note={total ? `${Math.round(crawlers / total * 100)}%` : undefined} />
       </div>
 
@@ -90,8 +92,8 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
       {/* ── Time-series chart ── */}
       <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px', padding: '18px 20px', marginBottom: '20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '12px' }}>
-          <span style={{ fontSize: '13px', fontWeight: 600, color: '#09090b' }}>Hourly Traffic</span>
-          <span style={{ fontSize: '11px', color: '#a1a1aa' }}>last 24 h · refreshes every 30 s</span>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: '#09090b' }}>{t('Hourly Traffic', 'Saatlik Trafik')}</span>
+          <span style={{ fontSize: '11px', color: '#a1a1aa' }}>{t('last 24 h · refreshes every 30 s', 'son 24 sa · 30 sn’de bir yenilenir')}</span>
         </div>
         <TimeSeriesChart buckets={stats?.hourly_buckets ?? []} />
       </div>
@@ -101,9 +103,9 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
 
         <div style={{ padding: '14px 20px', borderBottom: '1px solid #e4e4e7' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-            <span style={{ fontSize: '13px', fontWeight: 600, color: '#09090b' }}>Requests</span>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: '#09090b' }}>{t('Requests', 'İstekler')}</span>
             <span style={{ fontSize: '11px', color: '#a1a1aa', fontVariantNumeric: 'tabular-nums' }}>
-              {hasFilter ? `${filteredEvents.length} of ${total} shown` : `${total} events`}
+              {hasFilter ? t(`${filteredEvents.length} of ${total} shown`, `${total} olaydan ${filteredEvents.length} tanesi`) : t(`${total} events`, `${total} olay`)}
             </span>
           </div>
 
@@ -124,7 +126,7 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
 
             <input
               type="text"
-              placeholder="Filter path…"
+              placeholder={t('Filter path…', 'Yol filtrele…')}
               value={pathQuery}
               onChange={e => setPathQuery(e.target.value)}
               style={{
@@ -137,19 +139,19 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
             {hasFilter && (
               <button className="vbtn" onClick={() => { setFilterVerdicts(new Set()); setPathQuery('') }}
                 style={{ padding: '3px 8px', borderRadius: '4px', fontSize: '11px', border: '1px solid #e4e4e7', background: 'transparent', color: '#71717a' }}>
-                Clear
+                {t('Clear', 'Temizle')}
               </button>
             )}
           </div>
         </div>
 
         {isLoading ? (
-          <div style={{ padding: '56px', textAlign: 'center', color: '#a1a1aa', fontSize: '13px' }}>Loading…</div>
+          <div style={{ padding: '56px', textAlign: 'center', color: '#a1a1aa', fontSize: '13px' }}>{t('Loading…', 'Yükleniyor…')}</div>
         ) : total === 0 ? (
           <div style={{ padding: '48px 24px', textAlign: 'center' }}>
-            <div style={{ fontSize: '14px', fontWeight: 600, color: '#09090b', marginBottom: '6px' }}>No requests recorded yet</div>
+            <div style={{ fontSize: '14px', fontWeight: 600, color: '#09090b', marginBottom: '6px' }}>{t('No requests recorded yet', 'Henüz istek kaydedilmedi')}</div>
             <div style={{ fontSize: '12.5px', color: '#71717a', marginBottom: '16px' }}>
-              Simulate AI agents visiting your store in real-time using the buttons below:
+              {t('Simulate AI agents visiting your store in real-time using the buttons below:', 'Aşağıdaki butonlarla mağazanızı ziyaret eden AI ajanlarını gerçek zamanlı simüle edin:')}
             </div>
             <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
               {['chatgpt', 'claude', 'perplexity'].map(agent => (
@@ -158,21 +160,21 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
                   background: '#09090b', color: '#fff', border: 'none', cursor: 'pointer',
                   display: 'inline-flex', alignItems: 'center', gap: '5px',
                 }}>
-                  🤖 Simulate {agent.charAt(0).toUpperCase() + agent.slice(1)}
+                  🤖 {t('Simulate', 'Simüle et:')} {agent.charAt(0).toUpperCase() + agent.slice(1)}
                 </button>
               ))}
             </div>
           </div>
         ) : filteredEvents.length === 0 ? (
           <div style={{ padding: '40px', textAlign: 'center', color: '#a1a1aa', fontSize: '13px' }}>
-            No results match the current filters.
+            {t('No results match the current filters.', 'Mevcut filtrelerle eşleşen sonuç yok.')}
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12.5px' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #e4e4e7' }}>
-                  {['Time', 'Method', 'Path', 'UA', 'Verdict', 'Evidence', 'Conf.', 'Status'].map(h => (
+                  {[t('Time', 'Zaman'), t('Method', 'Metot'), t('Path', 'Yol'), t('UA', 'UA'), t('Verdict', 'Karar'), t('Evidence', 'Kanıt'), t('Conf.', 'Güven'), t('Status', 'Durum')].map(h => (
                     <th key={h} style={{
                       padding: '9px 16px', textAlign: 'left',
                       fontSize: '11px', fontWeight: 600, color: '#71717a',

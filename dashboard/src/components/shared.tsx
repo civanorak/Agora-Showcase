@@ -1,5 +1,6 @@
 import { verdictStyle } from '../verdicts'
 import type { AgoraEvent } from '../types'
+import { useI18n } from '../i18n'
 
 export function AgentBadge({ verdict }: { verdict: string | null }) {
   const s = verdictStyle(verdict)
@@ -49,6 +50,7 @@ export function StatCard({ label, value, note }: { label: string; value: number 
 }
 
 export function TrafficBar({ events }: { events: AgoraEvent[] }) {
+  const { t } = useI18n()
   if (events.length === 0) return null
   const counts: Record<string, number> = {}
   for (const e of events) {
@@ -62,8 +64,8 @@ export function TrafficBar({ events }: { events: AgoraEvent[] }) {
   return (
     <div style={{ marginBottom: '28px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-        <span style={{ fontSize: '12px', fontWeight: 600, color: '#52525b' }}>Traffic Breakdown</span>
-        <span style={{ fontSize: '12px', color: '#a1a1aa' }}>{total} requests</span>
+        <span style={{ fontSize: '12px', fontWeight: 600, color: '#52525b' }}>{t('Traffic Breakdown', 'Trafik Dağılımı')}</span>
+        <span style={{ fontSize: '12px', color: '#a1a1aa' }}>{total} {t('requests', 'istek')}</span>
       </div>
       <div style={{ display: 'flex', height: '8px', borderRadius: '4px', overflow: 'hidden', background: '#f4f4f5', gap: '1px' }}>
         {segments.map(({ v, pct, s }) => (

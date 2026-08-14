@@ -1,4 +1,5 @@
 import { AgoraMark } from '../components/AgoraMark'
+import { useI18n } from '../i18n'
 
 interface LandingProps {
   auditUrl: string
@@ -16,34 +17,45 @@ const DETECTED_AGENTS = [
   'OAI-SearchBot', 'Googlebot', 'Amazonbot', 'CCBot', 'Bytespider', 'DuckAssistBot',
 ]
 
-const PIPELINE_STEPS = [
-  {
-    num: '01',
-    title: 'Detect',
-    body: 'A 3-line server-side middleware classifies every request — assistant, crawler, shopping agent or human — with confidence and evidence. No JavaScript, no cookies, no PII.',
-  },
-  {
-    num: '02',
-    title: 'Audit',
-    body: "AGORA crawls your storefront exactly the way an agent does: measures token cost, script-to-content ratio, schema.org coverage and robots.txt rules — and shows you what the agent actually read.",
-  },
-  {
-    num: '03',
-    title: 'Serve',
-    body: 'From the audit, AGORA generates a ready-to-host /llms.txt — a clean, machine-readable catalog agents load in a single request instead of parsing your JavaScript bundle.',
-  },
-]
-
-const CHECKLIST_FEATURES = [
-  { title: '/llms.txt discovery', desc: 'Lets assistants find your store structure in one request instead of crawling dozens of pages.' },
-  { title: 'Schema.org metadata', desc: 'Structured product markup that agents parse without guessing prices from layout.' },
-  { title: 'Text-to-HTML density', desc: 'Script-heavy pages burn an agent\'s token budget before it reaches your products.' },
-  { title: 'robots.txt configuration', desc: 'Verifies you are not accidentally blocking the exact agents that bring buyers.' },
-]
-
 export function Landing({
   auditUrl, onAuditUrlChange, onAudit, isAuditLoading, auditError, onOpenFeed, onOpenAuditor,
 }: LandingProps) {
+  const { t } = useI18n()
+
+  const pipelineSteps = [
+    {
+      num: '01',
+      title: t('Detect', 'Tespit Et'),
+      body: t(
+        'A 3-line server-side middleware classifies every request — assistant, crawler, shopping agent or human — with confidence and evidence. No JavaScript, no cookies, no PII.',
+        'Sunucu tarafında 3 satırlık bir ara katman her isteği sınıflandırır — asistan, tarayıcı, alışveriş ajanı ya da insan — güven skoru ve kanıtla. JavaScript yok, çerez yok, kişisel veri yok.',
+      ),
+    },
+    {
+      num: '02',
+      title: t('Audit', 'Denetle'),
+      body: t(
+        'AGORA crawls your storefront exactly the way an agent does: measures token cost, script-to-content ratio, schema.org coverage and robots.txt rules — and shows you what the agent actually read.',
+        'AGORA mağazanızı tıpkı bir ajan gibi tarar: token maliyetini, script-içerik oranını, schema.org kapsamını ve robots.txt kurallarını ölçer — ve ajanın gerçekte ne okuduğunu gösterir.',
+      ),
+    },
+    {
+      num: '03',
+      title: t('Serve', 'Sun'),
+      body: t(
+        'From the audit, AGORA generates a ready-to-host /llms.txt — a clean, machine-readable catalog agents load in a single request instead of parsing your JavaScript bundle.',
+        'Denetimden yola çıkarak AGORA, yayına hazır bir /llms.txt üretir — ajanların JavaScript paketinizi ayrıştırmak yerine tek istekte yüklediği, temiz ve makinece okunabilir bir katalog.',
+      ),
+    },
+  ]
+
+  const checklistFeatures = [
+    { title: t('/llms.txt discovery', '/llms.txt keşfi'), desc: t('Lets assistants find your store structure in one request instead of crawling dozens of pages.', 'Asistanların onlarca sayfayı taramak yerine mağaza yapınızı tek istekte bulmasını sağlar.') },
+    { title: t('Schema.org metadata', 'Schema.org meta verisi'), desc: t('Structured product markup that agents parse without guessing prices from layout.', 'Ajanların fiyatları düzenden tahmin etmeden ayrıştırdığı yapılandırılmış ürün işaretlemesi.') },
+    { title: t('Text-to-HTML density', 'Metin-HTML yoğunluğu'), desc: t("Script-heavy pages burn an agent's token budget before it reaches your products.", 'Script ağırlıklı sayfalar, ajanın token bütçesini ürünlerinize ulaşmadan tüketir.') },
+    { title: t('robots.txt configuration', 'robots.txt yapılandırması'), desc: t('Verifies you are not accidentally blocking the exact agents that bring buyers.', 'Alıcı getiren ajanları yanlışlıkla engellemediğinizi doğrular.') },
+  ]
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '88px' }}>
 
@@ -58,13 +70,14 @@ export function Landing({
           </div>
 
           <h1 style={{ fontSize: '48px', fontWeight: 800, color: '#09090b', lineHeight: 1.05, margin: '0 0 20px', letterSpacing: '-0.03em' }}>
-            Your next customer<br />isn't human.
+            {t('Your next customer', 'Bir sonraki müşteriniz')}<br />{t("isn't human.", 'insan değil.')}
           </h1>
 
           <p style={{ fontSize: '16px', color: '#52525b', lineHeight: 1.65, margin: '0 0 32px', maxWidth: '480px' }}>
-            AI assistants are already browsing your store — and your analytics can't see them.
-            AGORA detects every agent visit at the request level and turns your catalog into
-            something agents can actually read.
+            {t(
+              "AI assistants are already browsing your store — and your analytics can't see them. AGORA detects every agent visit at the request level and turns your catalog into something agents can actually read.",
+              'AI asistanları mağazanızı çoktan geziyor — ve analitiğiniz onları göremiyor. AGORA her ajan ziyaretini istek düzeyinde tespit eder ve kataloğunuzu ajanların gerçekten okuyabileceği bir şeye dönüştürür.',
+            )}
           </p>
 
           {/* Live audit input — the demo starts here */}
@@ -89,7 +102,7 @@ export function Landing({
                 minWidth: '150px', textAlign: 'center',
               }}
             >
-              {isAuditLoading ? 'Auditing…' : 'Run Agent Audit'}
+              {isAuditLoading ? t('Auditing…', 'Denetleniyor…') : t('Run Agent Audit', 'Ajan Denetimini Başlat')}
             </button>
           </div>
 
@@ -104,9 +117,9 @@ export function Landing({
           )}
 
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            <span style={{ fontSize: '11px', color: '#a1a1aa' }}>See it live:</span>
-            <button className="qbtn" onClick={onOpenFeed}>Open live feed →</button>
-            <button className="qbtn" onClick={onOpenAuditor}>Try the auditor →</button>
+            <span style={{ fontSize: '11px', color: '#a1a1aa' }}>{t('See it live:', 'Canlı görün:')}</span>
+            <button className="qbtn" onClick={onOpenFeed}>{t('Open live feed →', 'Canlı akışı aç →')}</button>
+            <button className="qbtn" onClick={onOpenAuditor}>{t('Try the auditor →', 'Denetleyiciyi dene →')}</button>
           </div>
         </div>
 
@@ -124,14 +137,14 @@ export function Landing({
               <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#e4e4e7' }} />
               <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#e4e4e7' }} />
               <span style={{ margin: '0 auto', fontSize: '10px', color: '#a1a1aa', fontFamily: 'ui-monospace, monospace' }}>
-                what the agent sees
+                {t('what the agent sees', 'ajanın gördüğü')}
               </span>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', height: '240px', background: '#fff' }}>
               <div style={{ borderRight: '1px solid #f4f4f5', padding: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ fontSize: '10px', fontWeight: 700, color: '#b91c1c', textTransform: 'uppercase', marginBottom: '8px' }}>
-                  Without AGORA
+                  {t('Without AGORA', 'AGORA olmadan')}
                 </div>
                 <pre style={{ margin: 0, fontSize: '9.5px', color: '#a1a1aa', fontFamily: 'ui-monospace, monospace', lineHeight: 1.4, overflow: 'hidden' }}>
 {`<!DOCTYPE html>
@@ -154,7 +167,7 @@ export function Landing({
 
               <div style={{ padding: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ fontSize: '10px', fontWeight: 700, color: '#166534', textTransform: 'uppercase', marginBottom: '8px' }}>
-                  With AGORA /llms.txt
+                  {t('With AGORA /llms.txt', 'AGORA /llms.txt ile')}
                 </div>
                 <pre style={{ margin: 0, fontSize: '9.5px', color: '#3f3f46', fontFamily: 'ui-monospace, monospace', lineHeight: 1.4, overflow: 'hidden' }}>
 {`# Demo Store
@@ -184,8 +197,8 @@ export function Landing({
           }}>
             <span style={{ fontSize: '18px' }}>⚡</span>
             <div>
-              <div style={{ fontSize: '11px', fontWeight: 700, color: '#09090b' }}>Live audit</div>
-              <div style={{ fontSize: '9px', color: '#71717a' }}>runs in seconds, no signup</div>
+              <div style={{ fontSize: '11px', fontWeight: 700, color: '#09090b' }}>{t('Live audit', 'Canlı denetim')}</div>
+              <div style={{ fontSize: '9px', color: '#71717a' }}>{t('runs in seconds, no signup', 'saniyeler içinde, kayıt gerekmez')}</div>
             </div>
           </div>
         </div>
@@ -197,7 +210,7 @@ export function Landing({
           textTransform: 'uppercase', fontSize: '10px', fontWeight: 700, color: '#a1a1aa',
           textAlign: 'center', letterSpacing: '0.15em', margin: '0 0 16px',
         }}>
-          Agent signatures detected out of the box
+          {t('Agent signatures detected out of the box', 'Kutudan çıktığı gibi tespit edilen ajan imzaları')}
         </p>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', alignItems: 'center', flexWrap: 'wrap', padding: '0 32px' }}>
           {DETECTED_AGENTS.map(a => (
@@ -215,15 +228,15 @@ export function Landing({
       <section>
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
           <span style={{ fontSize: '10px', fontWeight: 700, color: '#09090b', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '8px' }}>
-            How it works
+            {t('How it works', 'Nasıl çalışır')}
           </span>
           <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#09090b', margin: 0, letterSpacing: '-0.02em' }}>
-            See. Be readable. Then sell.
+            {t('See. Be readable. Then sell.', 'Gör. Okunabilir ol. Sonra sat.')}
           </h2>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
-          {PIPELINE_STEPS.map(step => (
+          {pipelineSteps.map(step => (
             <div key={step.num} className="stepcard" style={{ border: '1px solid #e4e4e7', borderRadius: '12px', background: '#fff', padding: '28px' }}>
               <div style={{ fontSize: '32px', fontWeight: 800, color: '#e4e4e7', lineHeight: 1, marginBottom: '16px', fontFamily: 'ui-monospace, monospace' }}>
                 {step.num}
@@ -240,20 +253,21 @@ export function Landing({
         <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.8fr', gap: '48px', alignItems: 'center' }}>
           <div>
             <span style={{ fontSize: '10px', fontWeight: 700, color: '#09090b', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '8px', display: 'inline-block' }}>
-              The audit checklist
+              {t('The audit checklist', 'Denetim kontrol listesi')}
             </span>
             <h2 style={{ fontSize: '26px', fontWeight: 800, color: '#09090b', margin: '0 0 16px', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
-              Ready for the next generation of search?
+              {t('Ready for the next generation of search?', 'Yeni nesil aramaya hazır mısınız?')}
             </h2>
             <p style={{ fontSize: '13px', color: '#71717a', lineHeight: 1.6, margin: 0 }}>
-              Agents don't render your JavaScript and don't scroll. They fetch raw HTML with a
-              fixed token budget. Every audit scores your storefront against the four signals
-              that decide whether an agent can quote your products — with evidence, not a grade.
+              {t(
+                "Agents don't render your JavaScript and don't scroll. They fetch raw HTML with a fixed token budget. Every audit scores your storefront against the four signals that decide whether an agent can quote your products — with evidence, not a grade.",
+                'Ajanlar JavaScript’inizi çalıştırmaz ve sayfayı kaydırmaz. Sabit bir token bütçesiyle ham HTML çeker. Her denetim, bir ajanın ürünlerinizi alıntılayıp alıntılayamayacağını belirleyen dört sinyale göre mağazanızı puanlar — not değil, kanıtla.',
+              )}
             </p>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-            {CHECKLIST_FEATURES.map(f => (
+            {checklistFeatures.map(f => (
               <div key={f.title} className="stepcard" style={{ border: '1px solid #e4e4e7', borderRadius: '8px', background: '#fff', padding: '16px 20px' }}>
                 <h4 style={{ fontSize: '13px', fontWeight: 700, color: '#09090b', margin: '0 0 6px', fontFamily: 'ui-monospace, monospace' }}>{f.title}</h4>
                 <p style={{ fontSize: '11.5px', color: '#71717a', margin: 0, lineHeight: 1.45 }}>{f.desc}</p>
@@ -267,23 +281,23 @@ export function Landing({
       <section>
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
           <span style={{ fontSize: '10px', fontWeight: 700, color: '#09090b', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '8px' }}>
-            Early access
+            {t('Early access', 'Erken erişim')}
           </span>
           <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#09090b', margin: 0, letterSpacing: '-0.02em' }}>
-            Free while we build it with you
+            {t('Free while we build it with you', 'Sizinle geliştirirken ücretsiz')}
           </h2>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', maxWidth: '800px', margin: '0 auto' }}>
           <div style={{ border: '1px solid #e4e4e7', borderRadius: '12px', background: '#fff', padding: '36px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#09090b', margin: '0 0 8px' }}>Sandbox</h3>
-              <p style={{ fontSize: '12.5px', color: '#71717a', margin: '0 0 24px' }}>Everything on this page, right now, no signup.</p>
+              <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#09090b', margin: '0 0 8px' }}>{t('Sandbox', 'Deneme Alanı')}</h3>
+              <p style={{ fontSize: '12.5px', color: '#71717a', margin: '0 0 24px' }}>{t('Everything on this page, right now, no signup.', 'Bu sayfadaki her şey, hemen şimdi, kayıt gerekmez.')}</p>
               <ul style={{ padding: 0, margin: '0 0 24px', listStyle: 'none', fontSize: '12.5px', color: '#52525b', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <li>✓ Live storefront audit on any URL</li>
-                <li>✓ Generated /llms.txt you can host today</li>
-                <li>✓ Real-time agent detection feed</li>
-                <li>✓ Agent traffic simulator</li>
+                <li>{t('✓ Live storefront audit on any URL', '✓ Herhangi bir URL’de canlı mağaza denetimi')}</li>
+                <li>{t('✓ Generated /llms.txt you can host today', '✓ Bugün yayınlayabileceğiniz üretilmiş /llms.txt')}</li>
+                <li>{t('✓ Real-time agent detection feed', '✓ Gerçek zamanlı ajan tespit akışı')}</li>
+                <li>{t('✓ Agent traffic simulator', '✓ Ajan trafiği simülatörü')}</li>
               </ul>
             </div>
             <button
@@ -291,24 +305,27 @@ export function Landing({
               onClick={onOpenAuditor}
               style={{ width: '100%', padding: '10px 0', border: '1px solid #09090b', background: 'transparent', color: '#09090b', borderRadius: '6px', fontWeight: 600, fontSize: '12.5px', cursor: 'pointer' }}
             >
-              Open the sandbox
+              {t('Open the sandbox', 'Deneme alanını aç')}
             </button>
           </div>
 
           <div style={{ border: '2px solid #09090b', borderRadius: '12px', background: '#fff', padding: '36px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative' }}>
             <span style={{ position: 'absolute', top: '-12px', right: '20px', background: '#09090b', color: '#fff', fontSize: '9px', fontWeight: 700, padding: '3px 10px', borderRadius: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Design partner
+              {t('Design partner', 'Tasarım ortağı')}
             </span>
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#09090b', margin: '0 0 8px' }}>Pilot program</h3>
+              <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#09090b', margin: '0 0 8px' }}>{t('Pilot program', 'Pilot program')}</h3>
               <p style={{ fontSize: '12.5px', color: '#71717a', margin: '0 0 24px' }}>
-                For stores that want agent analytics on real traffic. Free during the pilot — you get the data, we get the feedback.
+                {t(
+                  'For stores that want agent analytics on real traffic. Free during the pilot — you get the data, we get the feedback.',
+                  'Gerçek trafik üzerinde ajan analitiği isteyen mağazalar için. Pilot süresince ücretsiz — veriyi siz alırsınız, geri bildirimi biz.',
+                )}
               </p>
               <ul style={{ padding: 0, margin: '0 0 24px', listStyle: 'none', fontSize: '12.5px', color: '#52525b', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <li>✓ Server-side collector on your stack</li>
-                <li>✓ Weekly AI traffic report (PDF)</li>
-                <li>✓ Hosted /llms.txt kept in sync</li>
-                <li>✓ Direct line to the team</li>
+                <li>{t('✓ Server-side collector on your stack', '✓ Altyapınıza sunucu tarafı toplayıcı')}</li>
+                <li>{t('✓ Weekly AI traffic report (PDF)', '✓ Haftalık AI trafik raporu (PDF)')}</li>
+                <li>{t('✓ Hosted /llms.txt kept in sync', '✓ Senkron tutulan barındırılan /llms.txt')}</li>
+                <li>{t('✓ Direct line to the team', '✓ Ekiple doğrudan iletişim')}</li>
               </ul>
             </div>
             <a
@@ -316,7 +333,7 @@ export function Landing({
               href="mailto:hello@agora.dev?subject=AGORA%20pilot%20program"
               style={{ width: '100%', padding: '10px 0', border: 'none', background: '#09090b', color: '#fff', borderRadius: '6px', fontWeight: 600, fontSize: '12.5px', cursor: 'pointer', textAlign: 'center', textDecoration: 'none', display: 'inline-block', boxSizing: 'border-box' }}
             >
-              Talk to us
+              {t('Talk to us', 'Bize ulaşın')}
             </a>
           </div>
         </div>
@@ -325,7 +342,7 @@ export function Landing({
       {/* ── Footer ── */}
       <footer style={{ borderTop: '1px solid #e4e4e7', padding: '40px 0', marginTop: '8px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '12px', color: '#71717a' }}>AGORA — the analytics & storefront layer for AI agents.</span>
+          <span style={{ fontSize: '12px', color: '#71717a' }}>{t('AGORA — the analytics & storefront layer for AI agents.', 'AGORA — AI ajanları için analitik ve mağaza katmanı.')}</span>
           <span style={{ fontSize: '12px', color: '#a1a1aa' }}>© 2026 AGORA</span>
         </div>
       </footer>

@@ -6,22 +6,25 @@ import { Auditor } from './pages/Auditor'
 import { Intelligence } from './pages/Intelligence'
 import { Admin } from './pages/Admin'
 import { AgoraMark } from './components/AgoraMark'
+import { LanguageToggle } from './components/LanguageToggle'
+import { useI18n } from './i18n'
 import { API } from './api'
 
 type Tab = 'landing' | 'feed' | 'auditor' | 'intelligence' | 'admin'
 
-const TABS: Array<{ id: Tab; label: string }> = [
-  { id: 'landing', label: 'Overview' },
-  { id: 'feed', label: 'Live Request Feed' },
-  { id: 'auditor', label: 'AI Storefront Auditor' },
-  { id: 'intelligence', label: 'Agent Intelligence' },
-  { id: 'admin', label: 'Leads' },
-]
-
 const SITE_ID = 'demo-site'
 
 export default function App() {
+  const { t } = useI18n()
   const [currentTab, setCurrentTab] = useState<Tab>('landing')
+
+  const tabs: Array<{ id: Tab; label: string }> = [
+    { id: 'landing', label: t('Overview', 'Genel Bakış') },
+    { id: 'feed', label: t('Live Request Feed', 'Canlı İstek Akışı') },
+    { id: 'auditor', label: t('AI Storefront Auditor', 'AI Mağaza Denetleyici') },
+    { id: 'intelligence', label: t('Agent Intelligence', 'Ajan İstihbaratı') },
+    { id: 'admin', label: t('Leads', 'Kayıtlar') },
+  ]
 
   // Audit state — shared between Landing (hero input) and Auditor (results)
   const [auditUrl, setAuditUrl] = useState('')
@@ -214,11 +217,12 @@ export default function App() {
             <AgoraMark size={24} />
             <span style={{ fontSize: '15px', fontWeight: 700, color: '#fafafa', letterSpacing: '-0.02em' }}>AGORA</span>
             <span style={{ width: '1px', height: '15px', background: '#27272a' }} />
-            <span style={{ fontSize: '12px', color: '#71717a', letterSpacing: '0.01em' }}>AI Traffic Analytics</span>
+            <span style={{ fontSize: '12px', color: '#71717a', letterSpacing: '0.01em' }}>{t('AI Traffic Analytics', 'AI Trafik Analitiği')}</span>
           </div>
-          {/* nav */}
+          {/* nav + language switch */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
           <nav style={{ display: 'flex', alignItems: 'center', gap: '4px', overflowX: 'auto' }}>
-            {TABS.map(tab => {
+            {tabs.map(tab => {
               const isActive = currentTab === tab.id
               return (
                 <button
@@ -238,6 +242,8 @@ export default function App() {
               )
             })}
           </nav>
+          <LanguageToggle />
+          </div>
         </div>
       </header>
 

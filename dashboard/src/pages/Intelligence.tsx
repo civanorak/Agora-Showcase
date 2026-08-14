@@ -1,6 +1,7 @@
 import type { BenchmarkData, DemandData } from '../types'
 import { verdictStyle } from '../verdicts'
 import { StatCard } from '../components/shared'
+import { useI18n } from '../i18n'
 
 interface IntelligenceProps {
   demand: DemandData | null
@@ -25,14 +26,18 @@ function fmtTime(ts: string): string {
 }
 
 export function Intelligence({ demand, benchmark, isLoading }: IntelligenceProps) {
+  const { t } = useI18n()
   return (
     <>
       <div style={{ marginBottom: '28px' }}>
         <h1 style={{ fontSize: '20px', fontWeight: 700, color: '#09090b', margin: 0, letterSpacing: '-0.02em' }}>
-          Agent Intelligence
+          {t('Agent Intelligence', 'Ajan İstihbaratı')}
         </h1>
         <p style={{ fontSize: '13px', color: '#71717a', margin: '5px 0 0', lineHeight: 1.5 }}>
-          What agents ask for, and where you rank against your category — the layer only measured stores can see.
+          {t(
+            'What agents ask for, and where you rank against your category — the layer only measured stores can see.',
+            'Ajanların ne istediği ve kategorinizdeki sıralamanız — yalnızca ölçülen mağazaların görebildiği katman.',
+          )}
         </p>
       </div>
 
@@ -44,6 +49,7 @@ export function Intelligence({ demand, benchmark, isLoading }: IntelligenceProps
 
 // ── Panel 1: Agent Demand ─────────────────────────────────────────────
 function DemandPanel({ demand, isLoading }: { demand: DemandData | null; isLoading: boolean }) {
+  const { t } = useI18n()
   const products = demand?.top_products ?? []
   const totalHits = demand?.total_agent_hits ?? 0
   const unmet = products.filter(p => p.success_rate < 1).length
@@ -51,33 +57,39 @@ function DemandPanel({ demand, isLoading }: { demand: DemandData | null; isLoadi
   return (
     <section style={{ marginBottom: '32px' }}>
       <SectionHeading
-        title="Agent Demand"
-        subtitle="Products agents requested, and whether your store could answer (2xx). Low answer rates are demand you are losing."
+        title={t('Agent Demand', 'Ajan Talebi')}
+        subtitle={t(
+          'Products agents requested, and whether your store could answer (2xx). Low answer rates are demand you are losing.',
+          'Ajanların talep ettiği ürünler ve mağazanızın yanıt verip veremediği (2xx). Düşük yanıt oranları kaybettiğiniz taleptir.',
+        )}
       />
 
       <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
-        <StatCard label="Agent Requests" value={totalHits} />
-        <StatCard label="Products Asked" value={products.length} />
+        <StatCard label={t('Agent Requests', 'Ajan İstekleri')} value={totalHits} />
+        <StatCard label={t('Products Asked', 'Sorulan Ürünler')} value={products.length} />
         <StatCard
-          label="Underserved"
+          label={t('Underserved', 'Karşılanmayan')}
           value={unmet}
-          note={products.length ? `${unmet} of ${products.length} not fully answered` : undefined}
+          note={products.length ? t(`${unmet} of ${products.length} not fully answered`, `${products.length} üründen ${unmet} tanesi tam yanıtlanmadı`) : undefined}
         />
       </div>
 
       <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px', overflow: 'hidden' }}>
         {isLoading ? (
-          <EmptyRow>Loading…</EmptyRow>
+          <EmptyRow>{t('Loading…', 'Yükleniyor…')}</EmptyRow>
         ) : products.length === 0 ? (
           <EmptyRow>
-            No agent demand in this window yet. Once agents hit your store, the products they ask for surface here.
+            {t(
+              'No agent demand in this window yet. Once agents hit your store, the products they ask for surface here.',
+              'Bu pencerede henüz ajan talebi yok. Ajanlar mağazanıza ulaştığında, sordukları ürünler burada görünür.',
+            )}
           </EmptyRow>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12.5px' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #e4e4e7' }}>
-                  {['Path', 'Agent Hits', 'Answered', 'Agent Types', 'Last Seen'].map(h => (
+                  {[t('Path', 'Yol'), t('Agent Hits', 'Ajan İsabeti'), t('Answered', 'Yanıtlanan'), t('Agent Types', 'Ajan Türleri'), t('Last Seen', 'Son Görülme')].map(h => (
                     <th key={h} style={thStyle}>{h}</th>
                   ))}
                 </tr>
@@ -137,47 +149,81 @@ function DemandPanel({ demand, isLoading }: { demand: DemandData | null; isLoadi
 
 // ── Panel 2: Category Benchmark ───────────────────────────────────────
 function BenchmarkPanel({ benchmark, isLoading }: { benchmark: BenchmarkData | null; isLoading: boolean }) {
+  const { t } = useI18n()
   const board = benchmark?.leaderboard ?? []
-  const noCategory = !isLoading && benchmark != null && benchmark.category == null
+  // In the public sandbox there is no live category traffic, so the leaderboard
+  // has no real peers to rank. Rather than show a broken/empty table, present an
+  // honest "coming soon — needs live traffic" state. The real table below still
+  // renders once a measured store (pilot) produces category data.
+  const noLiveData = !isLoading && (benchmark == null || benchmark.category == null || board.length === 0)
 
   return (
     <section style={{ marginBottom: '32px' }}>
       <SectionHeading
-        title="Category Benchmark"
-        subtitle="How your agent-readability ranks against peers in your category. Competitors are anonymized."
+        title={t('Category Benchmark', 'Kategori Kıyaslaması')}
+        subtitle={t(
+          'How your agent-readability ranks against peers in your category. Competitors are anonymized.',
+          'Ajan-okunabilirliğinizin kategorinizdeki emsallere göre sıralaması. Rakipler anonimleştirilir.',
+        )}
       />
 
-      {!isLoading && benchmark?.category && benchmark.your_rank != null && (
+      {isLoading ? (
+        <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px' }}>
+          <EmptyRow>{t('Loading…', 'Yükleniyor…')}</EmptyRow>
+        </div>
+      ) : noLiveData ? (
+        <ComingSoonCard
+          title={t('Requires live traffic', 'Canlı trafik gerektirir')}
+          body={t(
+            'The category leaderboard ranks your store against anonymized peers once the AGORA collector is measuring real agent traffic. Join the pilot to unlock it.',
+            'Kategori sıralaması, AGORA toplayıcısı gerçek ajan trafiğini ölçmeye başladığında mağazanızı anonim emsallerle kıyaslar. Açmak için pilota katılın.',
+          )}
+        />
+      ) : (
+        <BenchmarkTable benchmark={benchmark} board={board} />
+      )}
+    </section>
+  )
+}
+
+function ComingSoonCard({ title, body }: { title: string; body: string }) {
+  return (
+    <div style={{
+      background: '#fff', border: '1px dashed #d4d4d8', borderRadius: '12px',
+      padding: '40px 32px', textAlign: 'center', maxWidth: '560px', margin: '0 auto',
+    }}>
+      <div style={{ fontSize: '28px', marginBottom: '12px' }}>📡</div>
+      <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#09090b', margin: '0 0 8px' }}>{title}</h3>
+      <p style={{ fontSize: '13px', color: '#71717a', lineHeight: 1.6, margin: 0 }}>{body}</p>
+    </div>
+  )
+}
+
+function BenchmarkTable({ benchmark, board }: { benchmark: BenchmarkData | null; board: BenchmarkData['leaderboard'] }) {
+  const { t } = useI18n()
+  return (
+    <>
+      {benchmark?.category && benchmark.your_rank != null && (
         <div style={{
           background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px',
           padding: '20px 22px', marginBottom: '16px',
         }}>
           <div style={{ fontSize: '11px', fontWeight: 600, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
-            Your Rank · {benchmark.category}
+            {t('Your Rank', 'Sıralamanız')} · {benchmark.category}
           </div>
           <div style={{ fontSize: '30px', fontWeight: 700, color: '#09090b', marginTop: '8px', lineHeight: 1, letterSpacing: '-0.02em' }}>
             #{benchmark.your_rank}
-            <span style={{ fontSize: '16px', color: '#a1a1aa', fontWeight: 600 }}> of {benchmark.total_in_category}</span>
+            <span style={{ fontSize: '16px', color: '#a1a1aa', fontWeight: 600 }}> {t('of', '/')} {benchmark.total_in_category}</span>
           </div>
         </div>
       )}
 
       <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px', overflow: 'hidden' }}>
-        {isLoading ? (
-          <EmptyRow>Loading…</EmptyRow>
-        ) : noCategory ? (
-          <EmptyRow>
-            This store has no category set, so it has no peers to benchmark against. Assign a category when creating the
-            site to unlock the leaderboard.
-          </EmptyRow>
-        ) : board.length === 0 ? (
-          <EmptyRow>No stores in this category yet.</EmptyRow>
-        ) : (
-          <div style={{ overflowX: 'auto' }}>
+        <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12.5px' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #e4e4e7' }}>
-                  {['Rank', 'Store', 'Readiness', 'Agent Hits', ''].map((h, idx) => (
+                  {[t('Rank', 'Sıra'), t('Store', 'Mağaza'), t('Readiness', 'Hazırlık'), t('Agent Hits', 'Ajan İsabeti'), ''].map((h, idx) => (
                     <th key={idx} style={thStyle}>{h}</th>
                   ))}
                 </tr>
@@ -202,7 +248,7 @@ function BenchmarkPanel({ benchmark, isLoading }: { benchmark: BenchmarkData | n
                             marginLeft: '8px', fontSize: '10px', fontWeight: 700, color: '#0369a1',
                             background: '#e0f2fe', border: '1px solid #bae6fd', borderRadius: '4px', padding: '1px 6px',
                           }}>
-                            YOU
+                            {t('YOU', 'SİZ')}
                           </span>
                         )}
                       </td>
@@ -226,9 +272,8 @@ function BenchmarkPanel({ benchmark, isLoading }: { benchmark: BenchmarkData | n
               </tbody>
             </table>
           </div>
-        )}
       </div>
-    </section>
+    </>
   )
 }
 
