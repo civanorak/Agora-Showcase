@@ -3,6 +3,7 @@ import type { AgoraEvent, StatsData } from '../types'
 import { AI_VERDICTS, VERDICT_STYLE } from '../verdicts'
 import { AgentBadge, EvidenceChips, StatCard, StatusChip, TrafficBar } from '../components/shared'
 import { TimeSeriesChart } from '../components/TimeSeriesChart'
+import { DemoBadge } from '../components/DemoBadge'
 import { useI18n } from '../i18n'
 
 interface FeedProps {
@@ -44,9 +45,12 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
   return (
     <>
       <div style={{ marginBottom: '28px' }}>
-        <h1 style={{ fontSize: '20px', fontWeight: 700, color: '#09090b', margin: 0, letterSpacing: '-0.02em' }}>
-          {t('Live Request Feed', 'Canlı İstek Akışı')}
-        </h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <h1 style={{ fontSize: '20px', fontWeight: 700, color: '#09090b', margin: 0, letterSpacing: '-0.02em' }}>
+            {t('Live Request Feed', 'Canlı İstek Akışı')}
+          </h1>
+          <DemoBadge />
+        </div>
         <p style={{ fontSize: '13px', color: '#71717a', margin: '5px 0 0', lineHeight: 1.5 }}>
           {t('Classifier v1 active', 'Sınıflandırıcı v1 aktif')}
           {streamMode === 'sse' ? t(' · Live stream', ' · Canlı akış') : t(' · Polling every 3s', ' · 3 sn’de bir yoklama')}

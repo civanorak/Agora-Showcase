@@ -1,6 +1,7 @@
 import type { BenchmarkData, DemandData } from '../types'
 import { verdictStyle } from '../verdicts'
 import { StatCard } from '../components/shared'
+import { DemoBadge } from '../components/DemoBadge'
 import { useI18n } from '../i18n'
 
 interface IntelligenceProps {
@@ -62,6 +63,7 @@ function DemandPanel({ demand, isLoading }: { demand: DemandData | null; isLoadi
           'Products agents requested, and whether your store could answer (2xx). Low answer rates are demand you are losing.',
           'Ajanların talep ettiği ürünler ve mağazanızın yanıt verip veremediği (2xx). Düşük yanıt oranları kaybettiğiniz taleptir.',
         )}
+        badge={<DemoBadge />}
       />
 
       <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
@@ -278,10 +280,13 @@ function BenchmarkTable({ benchmark, board }: { benchmark: BenchmarkData | null;
 }
 
 // ── Small shared bits ─────────────────────────────────────────────────
-function SectionHeading({ title, subtitle }: { title: string; subtitle: string }) {
+function SectionHeading({ title, subtitle, badge }: { title: string; subtitle: string; badge?: React.ReactNode }) {
   return (
     <div style={{ marginBottom: '14px' }}>
-      <h2 style={{ fontSize: '15px', fontWeight: 700, color: '#09090b', margin: 0, letterSpacing: '-0.01em' }}>{title}</h2>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+        <h2 style={{ fontSize: '15px', fontWeight: 700, color: '#09090b', margin: 0, letterSpacing: '-0.01em' }}>{title}</h2>
+        {badge}
+      </div>
       <p style={{ fontSize: '12px', color: '#71717a', margin: '3px 0 0', lineHeight: 1.5, maxWidth: '640px' }}>{subtitle}</p>
     </div>
   )
