@@ -79,6 +79,81 @@ function CatalogRealityCard({ catalog }: { catalog: CatalogInfo }) {
   )
 }
 
+function RoadmapTag() {
+  const { t } = useI18n()
+  return (
+    <span
+      title={t('Planned capability — not running on this audit yet.', 'Planlanan yetenek — bu denetimde henüz çalışmıyor.')}
+      style={{
+        display: 'inline-flex', alignItems: 'center', gap: '5px',
+        fontSize: '10.5px', fontWeight: 700, letterSpacing: '0.04em',
+        textTransform: 'uppercase', whiteSpace: 'nowrap',
+        color: '#3730a3', background: '#eef2ff', border: '1px solid #c7d2fe',
+        borderRadius: '5px', padding: '2px 8px', cursor: 'default',
+      }}
+    >
+      <span aria-hidden style={{ fontSize: '9px' }}>◆</span>
+      {t('Roadmap', 'Yol haritası')}
+    </span>
+  )
+}
+
+/**
+ * Freshness value proposition. A copied static /llms.txt drifts out of sync the
+ * moment a price or product changes on the store. This card frames AGORA's
+ * continuous re-scan as the reason the relationship is ongoing — using the real
+ * audited catalog numbers, and honestly tagged Roadmap since scheduled re-scan
+ * is not yet shipped.
+ */
+function FreshnessCard({ catalog }: { catalog: CatalogInfo | null }) {
+  const { t } = useI18n()
+  const count = catalog?.total_count ?? null
+  const sourceLabel = catalog ? (SOURCE_LABEL[catalog.source] ?? catalog.source) : null
+
+  const problem = count !== null && sourceLabel
+    ? t(
+        `Your ${count} products live in ${sourceLabel}. Prices and stock change there constantly — a file you copied once keeps quoting yesterday's numbers to agents.`,
+        `${count} ürününüz ${sourceLabel} içinde yaşıyor. Fiyatlar ve stok orada sürekli değişir — bir kez kopyaladığınız dosya ajanlara dünün rakamlarını söylemeye devam eder.`,
+      )
+    : t(
+        'A file you copy once drifts out of date the moment a price or product changes on your store — and agents keep quoting the stale version.',
+        'Bir kez kopyaladığınız dosya, mağazanızda bir fiyat veya ürün değiştiği an eskir — ve ajanlar bayat sürümü söylemeye devam eder.',
+      )
+
+  return (
+    <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px', padding: '20px 24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+        <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#09090b', margin: 0 }}>
+          {t('Stays fresh — you never redo it', 'Güncel kalır — bir daha uğraşmazsınız')}
+        </h3>
+        <RoadmapTag />
+      </div>
+      <p style={{ fontSize: '12.5px', color: '#71717a', margin: '0 0 14px', lineHeight: 1.55 }}>
+        {problem}
+      </p>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', fontSize: '12px', color: '#3f3f46' }}>
+        <span style={{ background: '#f4f4f5', borderRadius: '5px', padding: '4px 9px', fontWeight: 600 }}>
+          {t('Re-scan catalog', 'Kataloğu tekrar tara')}
+        </span>
+        <span aria-hidden style={{ color: '#a1a1aa' }}>→</span>
+        <span style={{ background: '#f4f4f5', borderRadius: '5px', padding: '4px 9px', fontWeight: 600 }}>
+          {t('Detect price / product changes', 'Fiyat / ürün değişimini yakala')}
+        </span>
+        <span aria-hidden style={{ color: '#a1a1aa' }}>→</span>
+        <span style={{ background: '#ecfdf5', color: '#166534', border: '1px solid #bbf7d0', borderRadius: '5px', padding: '4px 9px', fontWeight: 600 }}>
+          {t('Regenerate /llms.txt', '/llms.txt yeniden üret')}
+        </span>
+      </div>
+      <p style={{ fontSize: '11.5px', color: '#a1a1aa', margin: '12px 0 0', lineHeight: 1.5 }}>
+        {t(
+          'AGORA re-checks your store on a schedule and refreshes the file automatically, so the agent view always matches reality — no manual re-export.',
+          'AGORA mağazanızı düzenli aralıklarla yeniden denetler ve dosyayı otomatik tazeler; böylece ajan görünümü her zaman gerçekle örtüşür — elle yeniden dışa aktarma yok.',
+        )}
+      </p>
+    </div>
+  )
+}
+
 function EmailCaptureCard({ url, coveragePct }: { url: string; coveragePct: number | null }) {
   const { t } = useI18n()
   const [email, setEmail] = useState('')
@@ -339,6 +414,9 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
                   </li>
                 </ol>
               </div>
+
+              {/* Freshness / recurring-value story */}
+              <FreshnessCard catalog={auditResult.catalog} />
             </div>
 
             {/* Right: generated llms.txt / markdown view */}
