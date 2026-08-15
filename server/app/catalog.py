@@ -21,6 +21,8 @@ from xml.etree import ElementTree as ET
 
 import httpx
 
+from .ssrf import SSRFError, pinned_get
+
 _TIMEOUT = 8.0
 _HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; AGORA-Auditor/0.1)"}
 # Shopify pagination: keep going until an empty page, hard safety cap
@@ -223,8 +225,8 @@ def _sample_candidate_urls(
 
 async def _fetch_text(client: httpx.AsyncClient, url: str) -> str | None:
     try:
-        resp = await client.get(url)
-    except httpx.HTTPError:
+        resp = await pinned_get(client, url)
+    except (httpx.HTTPError, SSRFError):
         return None
     if resp.status_code != 200:
         return None
@@ -373,8 +375,8 @@ async def _fetch_products_json_paginated(
     for page in range(1, _MAX_PAGES + 1):
         url = f"https://{domain}/products.json?limit={_PAGE_LIMIT}&page={page}"
         try:
-            resp = await client.get(url)
-        except httpx.HTTPError:
+            resp = await pinned_get(client, url)
+        except (httpx.HTTPError, SSRFError):
             break
         if resp.status_code != 200 or "json" not in resp.headers.get("content-type", ""):
             break

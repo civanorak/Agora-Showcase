@@ -148,7 +148,9 @@ async def test_scan_catalog_flat_sitemap_enriches_via_jsonld():
             status_code=200, text=product_html, headers={"content-type": "text/html"}
         )
 
-    with patch("httpx.AsyncClient.get", new=fake_get):
+    with patch("httpx.AsyncClient.get", new=fake_get), patch(
+        "app.ssrf._resolve", new=AsyncMock(return_value=["93.184.216.34"])
+    ):
         result = await scan_catalog("https://tstore.example")
 
     assert result.source == CatalogSource.SITEMAP

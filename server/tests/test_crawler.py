@@ -180,7 +180,7 @@ async def test_analyze_url_endpoint(client):
     from unittest.mock import AsyncMock
 
     with patch("httpx.AsyncClient.stream", return_value=MockStreamContext()), patch(
-        "app.ssrf.validate_public_url", new=AsyncMock(return_value=None)
+        "app.ssrf._resolve", new=AsyncMock(return_value=["93.184.216.34"])
     ), patch("httpx.AsyncClient.get") as mock_get:
 
         def side_effect(url, **kwargs):
@@ -258,7 +258,7 @@ async def test_analyze_url_includes_catalog_reality_diff(client):
     )
 
     with patch("httpx.AsyncClient.stream", return_value=MockStreamContext()), patch(
-        "app.ssrf.validate_public_url", new=AsyncMock(return_value=None)
+        "app.ssrf._resolve", new=AsyncMock(return_value=["93.184.216.34"])
     ), patch(
         "httpx.AsyncClient.get", new=AsyncMock(return_value=MagicMock(status_code=404))
     ), patch("app.crawler.scan_catalog", new=AsyncMock(return_value=scan)):
