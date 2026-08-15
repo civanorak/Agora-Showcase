@@ -288,8 +288,8 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
       </div>
 
       {auditError && (
-        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '14px 18px', borderRadius: '8px', fontSize: '13px' }}>
-          <strong>{t('Error:', 'Hata:')}</strong> {auditError}
+        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '14px 18px', borderRadius: '8px', fontSize: '13px', lineHeight: 1.5 }}>
+          <strong>{t('Couldn’t audit this site.', 'Bu site denetlenemedi.')}</strong> {auditError}
         </div>
       )}
 

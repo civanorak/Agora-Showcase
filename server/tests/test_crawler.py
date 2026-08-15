@@ -220,7 +220,9 @@ async def test_analyze_url_rejects_internal_target(client):
         "/report/analyze", json={"url": "http://127.0.0.1:8000/admin"}
     )
     assert resp.status_code == 400
-    assert "Refused to fetch URL" in resp.json()["detail"]
+    detail = resp.json()["detail"]
+    assert detail["code"] == "refused"
+    assert "127.0.0.1" in detail["message"]
 
 
 @pytest.mark.asyncio
@@ -329,3 +331,89 @@ def test_make_llms_preview_truncates_long_content_file():
     assert truncated is True
     assert len(preview) < len(full)
     assert "install package" in preview
+
+
+# ── Fetch resilience & friendly errors ────────────────────────────────────────
+
+from contextlib import asynccontextmanager  # noqa: E402
+
+import httpx  # noqa: E402
+from fastapi import HTTPException  # noqa: E402
+
+from app.crawler import _fetch_page  # noqa: E402
+from app.ssrf import SSRFError  # noqa: E402
+
+
+def _resp(status, headers=None, body=b"<html>ok</html>"):
+    r = MagicMock()
+    r.status_code = status
+    r.headers = headers or {}
+
+    async def _aiter():
+        yield body
+
+    r.aiter_bytes = _aiter
+    return r
+
+
+def _patch_stream(*, responses=None, raises=None):
+    """Return an async-context-manager stand-in for safe_stream that yields the
+    given responses in order (last repeats) or raises `raises` on entry."""
+    state = {"n": 0}
+
+    @asynccontextmanager
+    async def _ss(client, method, url, **kwargs):
+        if raises is not None:
+            raise raises
+        i = min(state["n"], len(responses) - 1)
+        state["n"] += 1
+        yield responses[i]
+
+    return _ss, state
+
+
+class TestFetchResilience:
+    async def test_blocked_then_retry_succeeds(self):
+        ss, state = _patch_stream(responses=[_resp(403), _resp(200)])
+        with patch("app.crawler.safe_stream", ss):
+            body = await _fetch_page("https://blocked.example/")
+        assert body == b"<html>ok</html>"
+        assert state["n"] == 2  # first blocked, retried with plain UA
+
+    async def test_persistent_block_is_friendly(self):
+        ss, _ = _patch_stream(responses=[_resp(403), _resp(403)])
+        with patch("app.crawler.safe_stream", ss):
+            with pytest.raises(HTTPException) as exc:
+                await _fetch_page("https://blocked.example/")
+        assert exc.value.detail["code"] == "blocked"
+        assert exc.value.detail["status"] == 403
+
+    async def test_404_is_not_retried_and_tagged(self):
+        ss, state = _patch_stream(responses=[_resp(404)])
+        with patch("app.crawler.safe_stream", ss):
+            with pytest.raises(HTTPException) as exc:
+                await _fetch_page("https://missing.example/x")
+        assert exc.value.detail["code"] == "not_found"
+        assert state["n"] == 1  # 404 is a real answer — no retry
+
+    async def test_oversize_by_content_length_is_rejected(self):
+        big = _resp(200, headers={"Content-Length": str(3 * 1024 * 1024)})
+        ss, _ = _patch_stream(responses=[big])
+        with patch("app.crawler.safe_stream", ss):
+            with pytest.raises(HTTPException) as exc:
+                await _fetch_page("https://huge.example/")
+        assert exc.value.detail["code"] == "too_large"
+
+    async def test_ssrf_refusal_is_friendly(self):
+        ss, _ = _patch_stream(raises=SSRFError("URL host is a non-public address: 127.0.0.1"))
+        with patch("app.crawler.safe_stream", ss):
+            with pytest.raises(HTTPException) as exc:
+                await _fetch_page("http://127.0.0.1/")
+        assert exc.value.detail["code"] == "refused"
+
+    async def test_timeout_is_unreachable(self):
+        ss, _ = _patch_stream(raises=httpx.ConnectTimeout("timed out"))
+        with patch("app.crawler.safe_stream", ss):
+            with pytest.raises(HTTPException) as exc:
+                await _fetch_page("https://slow.example/")
+        assert exc.value.detail["code"] == "unreachable"

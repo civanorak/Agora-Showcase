@@ -361,14 +361,114 @@ def parse_robots_txt(robots_content: str, path: str) -> tuple[bool, str]:
     return True, "robots.txt does not block known agent user-agents on this path"
 
 
-_CRAWLER_HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-        "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 AGORA-Auditor/1.0"
-    ),
+_BROWSER_UA = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+)
+_BASE_HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "en-US,en;q=0.9,tr;q=0.8",
 }
+# First attempt is transparent about being AGORA's auditor. Some WAFs block on the
+# unfamiliar token, so a blocked response is retried with a plain browser UA.
+_CRAWLER_HEADERS = {"User-Agent": f"{_BROWSER_UA} AGORA-Auditor/1.0", **_BASE_HEADERS}
+_RETRY_HEADERS = {"User-Agent": _BROWSER_UA, **_BASE_HEADERS}
+
+# Statuses that signal "bot protection / rate limit", not a genuine missing page.
+_BLOCK_STATUSES = frozenset((401, 403, 406, 429, 503))
+
+
+def _fetch_error(*, code: str, message: str, status: int | None = None) -> HTTPException:
+    """Build a 400 with a structured, user-facing detail the frontend localizes
+    by `code` (never a raw technical string dumped into the UI)."""
+    detail = {"code": code, "message": message}
+    if status is not None:
+        detail["status"] = status
+    return HTTPException(status_code=400, detail=detail)
+
+
+def _status_fetch_error(status: int) -> HTTPException:
+    if status in _BLOCK_STATUSES:
+        return _fetch_error(
+            code="blocked", status=status,
+            message=(
+                "The site blocked our audit request (HTTP "
+                f"{status}) — it is likely behind Cloudflare or a WAF that refuses "
+                "automated tools from our servers."
+            ),
+        )
+    if status == 404:
+        return _fetch_error(
+            code="not_found", status=404,
+            message="No page was found at that URL (HTTP 404).",
+        )
+    if status >= 500:
+        return _fetch_error(
+            code="server_error", status=status,
+            message=f"The site returned a server error (HTTP {status}).",
+        )
+    return _fetch_error(
+        code="client_error", status=status,
+        message=f"The site returned HTTP {status}.",
+    )
+
+
+_MAX_PAGE_BYTES = 2 * 1024 * 1024
+
+
+async def _read_capped(response) -> bytes:
+    """Stream the body, enforcing the 2MB cap on both Content-Length and actuals."""
+    declared = response.headers.get("Content-Length")
+    if declared and declared.isdigit() and int(declared) > _MAX_PAGE_BYTES:
+        raise _fetch_error(code="too_large", message="This page is larger than the 2MB audit limit.")
+    chunks: list[bytes] = []
+    total = 0
+    async for chunk in response.aiter_bytes():
+        total += len(chunk)
+        if total > _MAX_PAGE_BYTES:
+            raise _fetch_error(code="too_large", message="This page is larger than the 2MB audit limit.")
+        chunks.append(chunk)
+    return b"".join(chunks)
+
+
+async def _fetch_page(url_str: str) -> bytes:
+    """Fetch the target page, retrying once with a plain browser UA if the first
+    attempt is bot-blocked. Every SSRF/redirect hop is re-validated by safe_stream.
+    Failures are raised as friendly, code-tagged HTTPExceptions — never a raw
+    technical string in the UI.
+
+    Timeout is 8s (Vercel serverless functions cap at 10s, so we stay under it).
+    """
+    header_sets = (_CRAWLER_HEADERS, _RETRY_HEADERS)
+    last_block_status: int | None = None
+    try:
+        for attempt, headers in enumerate(header_sets):
+            async with httpx.AsyncClient(timeout=8.0, headers=headers) as client:
+                async with safe_stream(client, "GET", url_str) as response:
+                    if response.status_code in _BLOCK_STATUSES and attempt == 0:
+                        last_block_status = response.status_code
+                        continue  # retry with a plain browser UA
+                    if response.status_code >= 400:
+                        raise _status_fetch_error(response.status_code)
+                    return await _read_capped(response)
+    except SSRFError as e:
+        raise _fetch_error(
+            code="refused",
+            message=f"That URL was refused for security reasons: {e}",
+        )
+    except httpx.TimeoutException:
+        raise _fetch_error(
+            code="unreachable",
+            message="The site did not respond in time (8s). It may be slow or blocking our servers.",
+        )
+    except httpx.RequestError as e:
+        raise _fetch_error(
+            code="unreachable",
+            message=f"We could not reach the site: {type(e).__name__}.",
+        )
+
+    # Both attempts were bot-blocked.
+    raise _status_fetch_error(last_block_status or 403)
 
 
 @router.post(
@@ -383,34 +483,8 @@ async def analyze_url(req: AnalyzeRequest):
     if not (url_str.startswith("http://") or url_str.startswith("https://")):
         url_str = "https://" + url_str
 
-    # Fetch page once (Timeout 8s, Size cap 2MB). safe_stream re-validates the
-    # target and every redirect hop, so an attacker cannot use a public URL that
-    # redirects to an internal address to bypass the SSRF guard (D007-R).
-    try:
-        async with httpx.AsyncClient(timeout=8.0, headers=_CRAWLER_HEADERS) as client:
-            async with safe_stream(client, "GET", url_str) as response:
-                response.raise_for_status()
-                content_length = response.headers.get("Content-Length")
-                if content_length and int(content_length) > 2 * 1024 * 1024:
-                    raise HTTPException(status_code=400, detail="Page size exceeds 2MB limit")
-
-                chunks = []
-                bytes_downloaded = 0
-                async for chunk in response.aiter_bytes():
-                    bytes_downloaded += len(chunk)
-                    if bytes_downloaded > 2 * 1024 * 1024:
-                        raise HTTPException(status_code=400, detail="Page size exceeds 2MB limit")
-                    chunks.append(chunk)
-
-                html_bytes = b"".join(chunks)
-                html_content = html_bytes.decode("utf-8", errors="replace")
-    except SSRFError as e:
-        raise HTTPException(status_code=400, detail=f"Refused to fetch URL: {e}")
-    except httpx.HTTPStatusError as e:
-        raise HTTPException(status_code=400, detail=f"Target server returned error status {e.response.status_code}")
-    except httpx.RequestError as e:
-        raise HTTPException(status_code=400, detail=f"Request failed: {str(e)}")
-
+    html_bytes = await _fetch_page(url_str)
+    html_content = html_bytes.decode("utf-8", errors="replace")
     total_bytes = len(html_bytes)
 
     # Analyze HTML for metrics & schema

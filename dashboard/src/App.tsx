@@ -14,6 +14,61 @@ type Tab = 'landing' | 'feed' | 'auditor' | 'intelligence' | 'admin'
 
 const SITE_ID = 'demo-site'
 
+type Translate = (en: string, tr: string) => string
+type AuditErrorDetail = { code?: string; message?: string; status?: number }
+
+/**
+ * Turn the backend's structured {code, message} audit error into a friendly,
+ * localized sentence. The user should never see a raw technical string such as
+ * "Target server returned error status 403".
+ */
+function friendlyAuditError(detail: unknown, status: number, t: Translate): string {
+  const d = (detail && typeof detail === 'object' ? detail : {}) as AuditErrorDetail
+  switch (d.code) {
+    case 'blocked':
+      return t(
+        "This site blocks automated audits — it sits behind bot protection (like Cloudflare) that refuses our servers. Sites without that protection audit fine.",
+        'Bu site otomatik denetimleri engelliyor — sunucularımızı reddeden bir bot koruması (ör. Cloudflare) arkasında. Bu koruması olmayan siteler sorunsuz denetlenir.',
+      )
+    case 'not_found':
+      return t(
+        'No page was found at that URL (404). Check the address and try the homepage.',
+        'Bu adreste sayfa bulunamadı (404). Adresi kontrol edip ana sayfayı deneyin.',
+      )
+    case 'unreachable':
+      return t(
+        "The site didn't respond in time or refused the connection. It may be slow or blocking our servers.",
+        'Site zamanında yanıt vermedi ya da bağlantıyı reddetti. Yavaş olabilir veya sunucularımızı engelliyor olabilir.',
+      )
+    case 'too_large':
+      return t(
+        'This page is too large to audit (over 2 MB).',
+        'Bu sayfa denetlenemeyecek kadar büyük (2 MB üzeri).',
+      )
+    case 'server_error':
+      return t(
+        'The site returned a server error. Try again in a moment.',
+        'Site bir sunucu hatası döndürdü. Birazdan tekrar deneyin.',
+      )
+    case 'refused':
+      return t(
+        'That URL was refused for security reasons.',
+        'Bu URL güvenlik nedeniyle reddedildi.',
+      )
+    case 'client_error':
+      return t(
+        "The site didn't return a readable page.",
+        'Site okunabilir bir sayfa döndürmedi.',
+      )
+  }
+  if (typeof detail === 'string' && detail) return detail
+  if (typeof d.message === 'string' && d.message) return d.message
+  if (!status || status >= 500) {
+    return t('Something went wrong on our side. Please try again.', 'Tarafımızda bir sorun oluştu. Lütfen tekrar deneyin.')
+  }
+  return t('We couldn’t audit that URL.', 'Bu URL denetlenemedi.')
+}
+
 export default function App() {
   const { t } = useI18n()
   const [currentTab, setCurrentTab] = useState<Tab>('landing')
@@ -73,11 +128,15 @@ export default function App() {
         try {
           data = JSON.parse(text)
         } catch {
-          if (!r.ok) throw new Error(`Server error (${r.status}). Please try again.`)
-          throw new Error('Invalid JSON response from server')
+          throw new Error(
+            t(
+              `The server returned an unexpected response (${r.status}). Please try again.`,
+              `Sunucu beklenmeyen bir yanıt döndürdü (${r.status}). Lütfen tekrar deneyin.`,
+            ),
+          )
         }
         if (!r.ok) {
-          throw new Error(data?.detail || 'Failed to crawl page')
+          throw new Error(friendlyAuditError(data?.detail, r.status, t))
         }
         return data as AuditResult
       })
