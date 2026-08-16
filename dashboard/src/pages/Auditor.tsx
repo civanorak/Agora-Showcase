@@ -16,7 +16,7 @@ function CatalogRealityCard({ catalog }: { catalog: CatalogInfo }) {
   return (
     <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px', padding: '20px 24px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '8px' }}>
-        <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#09090b', margin: 0 }}>
+        <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)', margin: 0 }}>
           {t('Catalog Reality vs Agent View', 'Katalog Gerçeği vs Ajan Görünümü')}
         </h3>
         <span style={{ fontSize: '11px', color: '#a1a1aa', fontFamily: 'ui-monospace, monospace' }}>
@@ -29,7 +29,7 @@ function CatalogRealityCard({ catalog }: { catalog: CatalogInfo }) {
           <div style={{ fontSize: '11px', fontWeight: 600, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
             {t('Products in catalog', 'Kataloğdaki ürünler')}
           </div>
-          <div style={{ fontSize: '26px', fontWeight: 700, color: '#09090b', marginTop: '4px' }}>
+          <div style={{ fontSize: '26px', fontWeight: 700, color: 'var(--ink)', marginTop: '4px' }}>
             {catalog.total_count}
           </div>
         </div>
@@ -123,7 +123,7 @@ function FreshnessCard({ catalog }: { catalog: CatalogInfo | null }) {
   return (
     <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px', padding: '20px 24px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-        <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#09090b', margin: 0 }}>
+        <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)', margin: 0 }}>
           {t('Stays fresh — you never redo it', 'Güncel kalır — bir daha uğraşmazsınız')}
         </h3>
         <RoadmapTag />
@@ -181,7 +181,7 @@ function EmailCaptureCard({ url, coveragePct }: { url: string; coveragePct: numb
 
   return (
     <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px', padding: '20px 24px' }}>
-      <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#09090b', margin: '0 0 4px' }}>
+      <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)', margin: '0 0 4px' }}>
         {t('Save this report', 'Bu raporu kaydedelim')}
       </h3>
       <p style={{ fontSize: '12.5px', color: '#71717a', margin: '0 0 14px', lineHeight: 1.5 }}>
@@ -202,7 +202,7 @@ function EmailCaptureCard({ url, coveragePct }: { url: string; coveragePct: numb
           className="vbtn"
           onClick={handleSubmit}
           disabled={status === 'submitting'}
-          style={{ padding: '9px 18px', borderRadius: '6px', fontSize: '13px', fontWeight: 600, background: '#09090b', color: '#fff', border: 'none', cursor: 'pointer' }}
+          style={{ padding: '9px 18px', borderRadius: '6px', fontSize: '13px', fontWeight: 600, background: 'var(--accent)', color: 'var(--on-accent)', border: 'none', cursor: 'pointer' }}
         >
           {status === 'submitting' ? t('Sending…', 'Gönderiliyor…') : t('Save', 'Kaydet')}
         </button>
@@ -238,7 +238,7 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
       <div>
-        <h1 style={{ fontSize: '20px', fontWeight: 700, color: '#09090b', margin: 0, letterSpacing: '-0.02em' }}>
+        <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)', margin: 0, letterSpacing: '-0.02em' }}>
           {t('AI Storefront Auditor', 'AI Mağaza Denetleyici')}
         </h1>
         <p style={{ fontSize: '13px', color: '#71717a', margin: '5px 0 0', lineHeight: 1.5 }}>
@@ -268,7 +268,7 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
             disabled={isAuditLoading}
             style={{
               padding: '10px 20px', borderRadius: '6px', fontSize: '13px', fontWeight: 600,
-              background: '#09090b', color: '#fff', border: 'none', cursor: 'pointer',
+              background: 'var(--accent)', color: 'var(--on-accent)', border: 'none', cursor: 'pointer',
               minWidth: '150px', textAlign: 'center',
             }}
           >
@@ -299,7 +299,7 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
           padding: '40px 32px', textAlign: 'center', maxWidth: '720px', margin: '16px auto 0',
         }}>
           <div style={{ fontSize: '32px', marginBottom: '12px' }}>🔍</div>
-          <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#09090b', margin: '0 0 8px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', margin: '0 0 8px' }}>
             {t('Ready to audit your storefront', 'Mağazanızı denetlemeye hazır')}
           </h3>
           <p style={{ fontSize: '13.5px', color: '#71717a', lineHeight: 1.6, margin: '0 0 24px', maxWidth: '540px', marginLeft: 'auto', marginRight: 'auto' }}>
@@ -311,7 +311,7 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
               onClick={() => { onAuditUrlChange('https://books.toscrape.com'); onAudit('https://books.toscrape.com') }}
               style={{
                 padding: '10px 20px', borderRadius: '6px', fontSize: '13px', fontWeight: 600,
-                background: '#09090b', color: '#fff', border: 'none', cursor: 'pointer',
+                background: 'var(--accent)', color: 'var(--on-accent)', border: 'none', cursor: 'pointer',
               }}
             >
               🚀 {t('Run Demo Audit (Books to Scrape)', 'Demo Denetimi Çalıştır (Books to Scrape)')}
@@ -321,7 +321,7 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
               onClick={() => { onAuditUrlChange('https://example.com'); onAudit('https://example.com') }}
               style={{
                 padding: '10px 20px', borderRadius: '6px', fontSize: '13px', fontWeight: 600,
-                background: '#f4f4f5', color: '#09090b', border: '1px solid #e4e4e7', cursor: 'pointer',
+                background: '#f4f4f5', color: 'var(--ink)', border: '1px solid #e4e4e7', cursor: 'pointer',
               }}
             >
               📄 {t('Try Example Domain', 'Örnek Alan Adını Dene')}
@@ -346,27 +346,27 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
               <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px', padding: '20px 24px' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#09090b', marginTop: 0, marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)', marginTop: 0, marginBottom: '16px' }}>
                   {t('Computed Crawl Metrics', 'Hesaplanan Tarama Metrikleri')}
                 </h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', borderBottom: '1px dashed #f4f4f5', paddingBottom: '8px' }}>
                     <span style={{ color: '#71717a' }}>{t('Total Download Size', 'Toplam İndirme Boyutu')}</span>
-                    <strong style={{ color: '#09090b' }}>{(auditResult.total_bytes / 1024).toFixed(1)} KB ({auditResult.total_bytes} {t('bytes', 'bayt')})</strong>
+                    <strong style={{ color: 'var(--ink)' }}>{(auditResult.total_bytes / 1024).toFixed(1)} KB ({auditResult.total_bytes} {t('bytes', 'bayt')})</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', borderBottom: '1px dashed #f4f4f5', paddingBottom: '8px' }}>
                     <span style={{ color: '#71717a' }}>{t('Script-to-Content Ratio', 'Script-İçerik Oranı')}</span>
-                    <strong style={{ color: '#09090b' }}>{auditResult.script_ratio}%</strong>
+                    <strong style={{ color: 'var(--ink)' }}>{auditResult.script_ratio}%</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
                     <span style={{ color: '#71717a' }}>{t('Extractable-Text %', 'Çıkarılabilir Metin %')}</span>
-                    <strong style={{ color: '#09090b' }}>{auditResult.extractable_text_pct}%</strong>
+                    <strong style={{ color: 'var(--ink)' }}>{auditResult.extractable_text_pct}%</strong>
                   </div>
                 </div>
               </div>
 
               <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px', padding: '20px 24px' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#09090b', marginTop: 0, marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)', marginTop: 0, marginBottom: '16px' }}>
                   {t('AI Readiness Checklist', 'AI Hazırlık Kontrol Listesi')}
                 </h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -394,7 +394,7 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
               </div>
 
               {/* Install instructions — the takeaway */}
-              <div style={{ background: '#09090b', border: '1px solid #27272a', borderRadius: '8px', padding: '20px 24px' }}>
+              <div style={{ background: 'var(--ink)', border: '1px solid #27272a', borderRadius: '8px', padding: '20px 24px' }}>
                 <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#fafafa', marginTop: 0, marginBottom: '10px' }}>
                   {t('Fix it in two steps', 'İki adımda çözün')}
                 </h3>
@@ -428,8 +428,8 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
                     onClick={() => setActiveView('llms')}
                     style={{
                       padding: '5px 12px', borderRadius: '5px', fontSize: '12px', fontWeight: 600, cursor: 'pointer',
-                      border: '1px solid', borderColor: activeView === 'llms' ? '#09090b' : '#e4e4e7',
-                      background: activeView === 'llms' ? '#09090b' : '#fff',
+                      border: '1px solid', borderColor: activeView === 'llms' ? 'var(--ink)' : '#e4e4e7',
+                      background: activeView === 'llms' ? 'var(--ink)' : '#fff',
                       color: activeView === 'llms' ? '#fff' : '#71717a',
                     }}
                   >
@@ -440,8 +440,8 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
                     onClick={() => setActiveView('markdown')}
                     style={{
                       padding: '5px 12px', borderRadius: '5px', fontSize: '12px', fontWeight: 600, cursor: 'pointer',
-                      border: '1px solid', borderColor: activeView === 'markdown' ? '#09090b' : '#e4e4e7',
-                      background: activeView === 'markdown' ? '#09090b' : '#fff',
+                      border: '1px solid', borderColor: activeView === 'markdown' ? 'var(--ink)' : '#e4e4e7',
+                      background: activeView === 'markdown' ? 'var(--ink)' : '#fff',
                       color: activeView === 'markdown' ? '#fff' : '#71717a',
                     }}
                   >
@@ -484,7 +484,7 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
                   <button
                     className="vbtn"
                     onClick={() => document.getElementById('lead-capture')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-                    style={{ padding: '8px 16px', borderRadius: '6px', fontSize: '12.5px', fontWeight: 600, border: 'none', background: '#09090b', color: '#fff', cursor: 'pointer' }}
+                    style={{ padding: '8px 16px', borderRadius: '6px', fontSize: '12.5px', fontWeight: 600, border: 'none', background: 'var(--accent)', color: 'var(--on-accent)', cursor: 'pointer' }}
                   >
                     {t('Request the full file', 'Tam dosyayı isteyin')}
                   </button>

@@ -31,7 +31,7 @@ export function Intelligence({ demand, benchmark, isLoading }: IntelligenceProps
   return (
     <>
       <div style={{ marginBottom: '28px' }}>
-        <h1 style={{ fontSize: '20px', fontWeight: 700, color: '#09090b', margin: 0, letterSpacing: '-0.02em' }}>
+        <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)', margin: 0, letterSpacing: '-0.02em' }}>
           {t('Agent Intelligence', 'Ajan İstihbaratı')}
         </h1>
         <p style={{ fontSize: '13px', color: '#71717a', margin: '5px 0 0', lineHeight: 1.5 }}>
@@ -106,7 +106,7 @@ function DemandPanel({ demand, isLoading }: { demand: DemandData | null; isLoadi
                       <td style={{ ...tdStyle, fontFamily: 'ui-monospace, monospace', color: '#3f3f46', maxWidth: '280px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={p.path}>
                         {p.path}
                       </td>
-                      <td style={{ ...tdStyle, fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: '#09090b' }}>
+                      <td style={{ ...tdStyle, fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: 'var(--ink)' }}>
                         {p.agent_hits}
                       </td>
                       <td style={tdStyle}>
@@ -195,7 +195,7 @@ function ComingSoonCard({ title, body }: { title: string; body: string }) {
       padding: '40px 32px', textAlign: 'center', maxWidth: '560px', margin: '0 auto',
     }}>
       <div style={{ fontSize: '28px', marginBottom: '12px' }}>📡</div>
-      <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#09090b', margin: '0 0 8px' }}>{title}</h3>
+      <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', margin: '0 0 8px' }}>{title}</h3>
       <p style={{ fontSize: '13px', color: '#71717a', lineHeight: 1.6, margin: 0 }}>{body}</p>
     </div>
   )
@@ -213,7 +213,7 @@ function BenchmarkTable({ benchmark, board }: { benchmark: BenchmarkData | null;
           <div style={{ fontSize: '11px', fontWeight: 600, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
             {t('Your Rank', 'Sıralamanız')} · {benchmark.category}
           </div>
-          <div style={{ fontSize: '30px', fontWeight: 700, color: '#09090b', marginTop: '8px', lineHeight: 1, letterSpacing: '-0.02em' }}>
+          <div style={{ fontSize: '30px', fontWeight: 700, color: 'var(--ink)', marginTop: '8px', lineHeight: 1, letterSpacing: '-0.02em' }}>
             #{benchmark.your_rank}
             <span style={{ fontSize: '16px', color: '#a1a1aa', fontWeight: 600 }}> {t('of', '/')} {benchmark.total_in_category}</span>
           </div>
@@ -238,7 +238,7 @@ function BenchmarkTable({ benchmark, board }: { benchmark: BenchmarkData | null;
                       borderBottom: i < board.length - 1 ? '1px solid #f4f4f5' : 'none',
                       background: row.is_you ? '#f0f9ff' : '#fff',
                     }}>
-                      <td style={{ ...tdStyle, fontWeight: 700, fontVariantNumeric: 'tabular-nums', color: '#09090b' }}>
+                      <td style={{ ...tdStyle, fontWeight: 700, fontVariantNumeric: 'tabular-nums', color: 'var(--ink)' }}>
                         #{row.rank}
                       </td>
                       <td style={tdStyle}>
@@ -284,7 +284,7 @@ function SectionHeading({ title, subtitle, badge }: { title: string; subtitle: s
   return (
     <div style={{ marginBottom: '14px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-        <h2 style={{ fontSize: '15px', fontWeight: 700, color: '#09090b', margin: 0, letterSpacing: '-0.01em' }}>{title}</h2>
+        <h2 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', margin: 0, letterSpacing: '-0.01em' }}>{title}</h2>
         {badge}
       </div>
       <p style={{ fontSize: '12px', color: '#71717a', margin: '3px 0 0', lineHeight: 1.5, maxWidth: '640px' }}>{subtitle}</p>

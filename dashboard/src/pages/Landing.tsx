@@ -88,7 +88,7 @@ export function Landing({
             <BrandBadge size={52} />
           </div>
 
-          <h1 style={{ fontSize: '48px', fontWeight: 800, color: '#09090b', lineHeight: 1.05, margin: '0 0 20px', letterSpacing: '-0.03em' }}>
+          <h1 style={{ fontSize: '48px', fontWeight: 600, color: 'var(--ink)', lineHeight: 1.05, margin: '0 0 20px', letterSpacing: '-0.03em' }}>
             {t('Your next customer', 'Bir sonraki müşteriniz')}<br />{t("isn't human.", 'insan değil.')}
           </h1>
 
@@ -117,7 +117,7 @@ export function Landing({
               disabled={isAuditLoading}
               style={{
                 padding: '13px 24px', borderRadius: '8px', fontSize: '13px', fontWeight: 600,
-                background: '#09090b', color: '#fff', border: 'none', cursor: 'pointer',
+                background: 'var(--accent)', color: 'var(--on-accent)', border: 'none', cursor: 'pointer',
                 minWidth: '150px', textAlign: 'center',
               }}
             >
@@ -216,7 +216,7 @@ export function Landing({
           }}>
             <span style={{ fontSize: '18px' }}>⚡</span>
             <div>
-              <div style={{ fontSize: '11px', fontWeight: 700, color: '#09090b' }}>{t('Live audit', 'Canlı denetim')}</div>
+              <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ink)' }}>{t('Live audit', 'Canlı denetim')}</div>
               <div style={{ fontSize: '9px', color: '#71717a' }}>{t('runs in seconds, no signup', 'saniyeler içinde, kayıt gerekmez')}</div>
             </div>
           </div>
@@ -251,7 +251,7 @@ export function Landing({
           <span style={{ fontSize: '10px', fontWeight: 700, color: '#b45309', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '12px' }}>
             {t('Why now', 'Neden şimdi')}
           </span>
-          <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#09090b', margin: '0 0 20px', letterSpacing: '-0.02em', lineHeight: 1.15 }}>
+          <h2 style={{ fontSize: '28px', fontWeight: 600, color: 'var(--ink)', margin: '0 0 20px', letterSpacing: '-0.02em', lineHeight: 1.15 }}>
             {t('Your traffic is quietly changing hands', 'Trafiğiniz sessizce el değiştiriyor')}
           </h2>
           <p style={{ fontSize: '14.5px', color: '#52525b', lineHeight: 1.7, margin: '0 0 16px' }}>
@@ -275,7 +275,7 @@ export function Landing({
               background: '#fff', padding: '18px 22px',
             }}>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '14px', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '30px', fontWeight: 800, color: '#09090b', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
+                <span style={{ fontSize: '30px', fontWeight: 600, color: 'var(--ink)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
                   {s.value}
                 </span>
                 <span style={{ fontSize: '13px', color: '#3f3f46', lineHeight: 1.45, flex: 1, minWidth: '160px' }}>
@@ -299,10 +299,10 @@ export function Landing({
       {/* ── How it works ── */}
       <section>
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <span style={{ fontSize: '10px', fontWeight: 700, color: '#09090b', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '8px' }}>
+          <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--ink)', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '8px' }}>
             {t('How it works', 'Nasıl çalışır')}
           </span>
-          <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#09090b', margin: '0 0 14px', letterSpacing: '-0.02em' }}>
+          <h2 style={{ fontSize: '28px', fontWeight: 600, color: 'var(--ink)', margin: '0 0 14px', letterSpacing: '-0.02em' }}>
             {t('See. Be readable. Then sell.', 'Gör. Okunabilir ol. Sonra sat.')}
           </h2>
           <p style={{ fontSize: '14px', color: '#71717a', lineHeight: 1.6, margin: '0 auto', maxWidth: '620px' }}>
@@ -316,10 +316,10 @@ export function Landing({
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
           {pipelineSteps.map(step => (
             <div key={step.num} className="stepcard" style={{ border: '1px solid #e4e4e7', borderRadius: '12px', background: '#fff', padding: '28px' }}>
-              <div style={{ fontSize: '32px', fontWeight: 800, color: '#e4e4e7', lineHeight: 1, marginBottom: '16px', fontFamily: 'ui-monospace, monospace' }}>
+              <div style={{ fontSize: '32px', fontWeight: 600, color: '#e4e4e7', lineHeight: 1, marginBottom: '16px', fontFamily: 'ui-monospace, monospace' }}>
                 {step.num}
               </div>
-              <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#09090b', margin: '0 0 8px' }}>{step.title}</h3>
+              <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', margin: '0 0 8px' }}>{step.title}</h3>
               <p style={{ fontSize: '12.5px', color: '#71717a', margin: 0, lineHeight: 1.55 }}>{step.body}</p>
             </div>
           ))}
@@ -330,10 +330,10 @@ export function Landing({
       <section style={{ background: '#fafafa', border: '1px solid #e4e4e7', borderRadius: '16px', padding: '40px 48px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.8fr', gap: '48px', alignItems: 'center' }}>
           <div>
-            <span style={{ fontSize: '10px', fontWeight: 700, color: '#09090b', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '8px', display: 'inline-block' }}>
+            <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--ink)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '8px', display: 'inline-block' }}>
               {t('The audit checklist', 'Denetim kontrol listesi')}
             </span>
-            <h2 style={{ fontSize: '26px', fontWeight: 800, color: '#09090b', margin: '0 0 16px', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
+            <h2 style={{ fontSize: '26px', fontWeight: 600, color: 'var(--ink)', margin: '0 0 16px', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
               {t('Ready for the next generation of search?', 'Yeni nesil aramaya hazır mısınız?')}
             </h2>
             <p style={{ fontSize: '13px', color: '#71717a', lineHeight: 1.6, margin: 0 }}>
@@ -347,7 +347,7 @@ export function Landing({
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
             {checklistFeatures.map(f => (
               <div key={f.title} className="stepcard" style={{ border: '1px solid #e4e4e7', borderRadius: '8px', background: '#fff', padding: '16px 20px' }}>
-                <h4 style={{ fontSize: '13px', fontWeight: 700, color: '#09090b', margin: '0 0 6px', fontFamily: 'ui-monospace, monospace' }}>{f.title}</h4>
+                <h4 style={{ fontSize: '13px', fontWeight: 700, color: 'var(--ink)', margin: '0 0 6px', fontFamily: 'ui-monospace, monospace' }}>{f.title}</h4>
                 <p style={{ fontSize: '11.5px', color: '#71717a', margin: 0, lineHeight: 1.45 }}>{f.desc}</p>
               </div>
             ))}
@@ -358,10 +358,10 @@ export function Landing({
       {/* ── Early access (honest — no fake pricing) ── */}
       <section>
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <span style={{ fontSize: '10px', fontWeight: 700, color: '#09090b', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '8px' }}>
+          <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--ink)', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '8px' }}>
             {t('Early access', 'Erken erişim')}
           </span>
-          <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#09090b', margin: 0, letterSpacing: '-0.02em' }}>
+          <h2 style={{ fontSize: '28px', fontWeight: 600, color: 'var(--ink)', margin: 0, letterSpacing: '-0.02em' }}>
             {t('Free while we build it with you', 'Sizinle geliştirirken ücretsiz')}
           </h2>
         </div>
@@ -369,7 +369,7 @@ export function Landing({
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', maxWidth: '800px', margin: '0 auto' }}>
           <div style={{ border: '1px solid #e4e4e7', borderRadius: '12px', background: '#fff', padding: '36px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#09090b', margin: '0 0 8px' }}>{t('Sandbox', 'Deneme Alanı')}</h3>
+              <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--ink)', margin: '0 0 8px' }}>{t('Sandbox', 'Deneme Alanı')}</h3>
               <p style={{ fontSize: '12.5px', color: '#71717a', margin: '0 0 24px' }}>{t('Everything on this page, right now, no signup.', 'Bu sayfadaki her şey, hemen şimdi, kayıt gerekmez.')}</p>
               <ul style={{ padding: 0, margin: '0 0 24px', listStyle: 'none', fontSize: '12.5px', color: '#52525b', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <li>{t('✓ Live storefront audit on any URL', '✓ Herhangi bir URL’de canlı mağaza denetimi')}</li>
@@ -381,18 +381,18 @@ export function Landing({
             <button
               className="vbtn"
               onClick={onOpenAuditor}
-              style={{ width: '100%', padding: '10px 0', border: '1px solid #09090b', background: 'transparent', color: '#09090b', borderRadius: '6px', fontWeight: 600, fontSize: '12.5px', cursor: 'pointer' }}
+              style={{ width: '100%', padding: '10px 0', border: '1px solid var(--ink)', background: 'transparent', color: 'var(--ink)', borderRadius: '6px', fontWeight: 600, fontSize: '12.5px', cursor: 'pointer' }}
             >
               {t('Open the sandbox', 'Deneme alanını aç')}
             </button>
           </div>
 
-          <div style={{ border: '2px solid #09090b', borderRadius: '12px', background: '#fff', padding: '36px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative' }}>
-            <span style={{ position: 'absolute', top: '-12px', right: '20px', background: '#09090b', color: '#fff', fontSize: '9px', fontWeight: 700, padding: '3px 10px', borderRadius: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div style={{ border: '2px solid var(--ink)', borderRadius: '12px', background: '#fff', padding: '36px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative' }}>
+            <span style={{ position: 'absolute', top: '-12px', right: '20px', background: 'var(--accent)', color: 'var(--on-accent)', fontSize: '9px', fontWeight: 700, padding: '3px 10px', borderRadius: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               {t('Design partner', 'Tasarım ortağı')}
             </span>
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#09090b', margin: '0 0 8px' }}>{t('Pilot program', 'Pilot program')}</h3>
+              <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--ink)', margin: '0 0 8px' }}>{t('Pilot program', 'Pilot program')}</h3>
               <p style={{ fontSize: '12.5px', color: '#71717a', margin: '0 0 24px' }}>
                 {t(
                   'For stores that want agent analytics on real traffic. Free during the pilot — you get the data, we get the feedback.',
@@ -409,7 +409,7 @@ export function Landing({
             <a
               className="vbtn"
               href="mailto:hello@agora.dev?subject=AGORA%20pilot%20program"
-              style={{ width: '100%', padding: '10px 0', border: 'none', background: '#09090b', color: '#fff', borderRadius: '6px', fontWeight: 600, fontSize: '12.5px', cursor: 'pointer', textAlign: 'center', textDecoration: 'none', display: 'inline-block', boxSizing: 'border-box' }}
+              style={{ width: '100%', padding: '10px 0', border: 'none', background: 'var(--accent)', color: 'var(--on-accent)', borderRadius: '6px', fontWeight: 600, fontSize: '12.5px', cursor: 'pointer', textAlign: 'center', textDecoration: 'none', display: 'inline-block', boxSizing: 'border-box' }}
             >
               {t('Talk to us', 'Bize ulaşın')}
             </a>

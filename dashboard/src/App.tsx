@@ -73,6 +73,15 @@ export default function App() {
   const { t } = useI18n()
   const [currentTab, setCurrentTab] = useState<Tab>('landing')
 
+  // Top bar turns to translucent glass once the page is scrolled past the top.
+  const [isScrolled, setIsScrolled] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   const tabs: Array<{ id: Tab; label: string }> = [
     { id: 'landing', label: t('Overview', 'Genel Bakış') },
     { id: 'feed', label: t('Live Request Feed', 'Canlı İstek Akışı') },
@@ -248,28 +257,37 @@ export default function App() {
   }, [])
 
   return (
-    <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif", background: '#fafafa', minHeight: '100vh', color: '#09090b' }}>
+    <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif", background: 'var(--bg)', minHeight: '100vh', color: 'var(--ink)' }}>
 
       <style>{`
-        .row-hover:hover { background: #fafafa !important; }
-        .row-new { animation: flash 1.4s ease-out; }
-        @keyframes flash { 0% { background: #f0fdf4; } 100% { background: transparent; } }
-        .vbtn { transition: all 120ms; cursor: pointer; }
-        .vbtn:hover { opacity: 0.85; }
+        .row-hover:hover { background: var(--bg) !important; }
+        .row-new { animation: flash 1.6s ease-out; }
+        @keyframes flash { 0% { background: var(--accent-tint); } 100% { background: transparent; } }
+        .vbtn { transition: background 160ms ease, opacity 160ms ease, transform 160ms ease; cursor: pointer; }
+        .vbtn:hover { opacity: 0.92; }
+        .vbtn:active { transform: translateY(1px); }
         .vbtn:disabled { opacity: 0.55; cursor: wait; }
         .qbtn {
-          padding: 4px 10px; font-size: 11px; color: #52525b; cursor: pointer;
-          border: 1px solid #e4e4e7; background: #fff; border-radius: 4px;
-          transition: all 120ms;
+          padding: 4px 10px; font-size: 11px; color: var(--muted); cursor: pointer;
+          border: 1px solid var(--border); background: var(--surface); border-radius: 4px;
+          transition: border-color 160ms ease, color 160ms ease;
         }
-        .qbtn:hover { border-color: #09090b; color: #09090b; }
-        .stepcard { transition: border-color 150ms, transform 150ms, box-shadow 150ms; }
-        .stepcard:hover { border-color: #a1a1aa !important; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
-        input:focus { outline: 2px solid #3b82f6; outline-offset: 1px; }
+        .qbtn:hover { border-color: var(--accent); color: var(--accent); }
+        .stepcard { transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease; }
+        .stepcard:hover { border-color: var(--accent) !important; box-shadow: 0 6px 18px rgba(53,133,123,0.10); }
+        input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
       `}</style>
 
       {/* ── App bar: brand left, nav right ── */}
-      <header style={{ background: '#09090b', position: 'sticky', top: 0, zIndex: 10 }}>
+      <header style={{
+        position: 'sticky', top: 0, zIndex: 10,
+        background: isScrolled ? 'var(--bar-glass)' : 'var(--bar-bg)',
+        backdropFilter: isScrolled ? 'saturate(180%) blur(14px)' : 'none',
+        WebkitBackdropFilter: isScrolled ? 'saturate(180%) blur(14px)' : 'none',
+        borderBottom: isScrolled ? '1px solid var(--border)' : '1px solid transparent',
+        boxShadow: isScrolled ? '0 1px 3px rgba(0,0,0,0.05)' : 'none',
+        transition: 'background 240ms ease, box-shadow 240ms ease, border-color 240ms ease',
+      }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 32px', height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '24px' }}>
           {/* brand — click returns to the Overview / landing page */}
           <button
@@ -281,9 +299,9 @@ export default function App() {
             }}
           >
             <BrandBadge size={28} />
-            <span style={{ fontSize: '15px', fontWeight: 700, color: '#fafafa', letterSpacing: '-0.02em' }}>AGORA</span>
-            <span style={{ width: '1px', height: '15px', background: '#27272a' }} />
-            <span style={{ fontSize: '12px', color: '#71717a', letterSpacing: '0.01em' }}>{t('AI Traffic Analytics', 'AI Trafik Analitiği')}</span>
+            <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--ink)', letterSpacing: '-0.01em' }}>AGORA</span>
+            <span style={{ width: '1px', height: '15px', background: 'var(--border)' }} />
+            <span style={{ fontSize: '12px', color: 'var(--muted)', letterSpacing: '0.01em' }}>{t('AI Traffic Analytics', 'AI Trafik Analitiği')}</span>
           </button>
           {/* nav + language switch */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
@@ -296,12 +314,12 @@ export default function App() {
                   onClick={() => setCurrentTab(tab.id)}
                   style={{
                     padding: '7px 12px', fontSize: '13px', fontWeight: 600, whiteSpace: 'nowrap',
-                    border: 'none', borderRadius: '7px', cursor: 'pointer', transition: 'color 120ms, background 120ms',
-                    background: isActive ? '#27272a' : 'transparent',
-                    color: isActive ? '#fafafa' : '#a1a1aa',
+                    border: 'none', borderRadius: '7px', cursor: 'pointer', transition: 'color 160ms ease, background 160ms ease',
+                    background: isActive ? 'var(--accent-tint)' : 'transparent',
+                    color: isActive ? 'var(--accent-strong)' : 'var(--muted)',
                   }}
-                  onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = '#fafafa' }}
-                  onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = '#a1a1aa' }}
+                  onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = 'var(--ink)' }}
+                  onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = 'var(--muted)' }}
                 >
                   {tab.label}
                 </button>

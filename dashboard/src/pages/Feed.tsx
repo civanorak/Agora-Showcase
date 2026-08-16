@@ -46,7 +46,7 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
     <>
       <div style={{ marginBottom: '28px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-          <h1 style={{ fontSize: '20px', fontWeight: 700, color: '#09090b', margin: 0, letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)', margin: 0, letterSpacing: '-0.02em' }}>
             {t('Live Request Feed', 'Canlı İstek Akışı')}
           </h1>
           <DemoBadge />
@@ -65,14 +65,14 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px',
       }}>
         <div>
-          <div style={{ fontSize: '13.5px', fontWeight: 700, color: '#09090b' }}>{t('AI Agent Simulator (Sandbox)', 'AI Ajan Simülatörü (Deneme)')}</div>
+          <div style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--ink)' }}>{t('AI Agent Simulator (Sandbox)', 'AI Ajan Simülatörü (Deneme)')}</div>
           <div style={{ fontSize: '11.5px', color: '#71717a', marginTop: '3px' }}>{t('Simulate AI bots visiting your store to test live detection in real-time.', 'Canlı tespiti gerçek zamanlı test etmek için mağazanızı ziyaret eden AI botlarını simüle edin.')}</div>
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
           {['chatgpt', 'claude', 'perplexity'].map(agent => (
             <button key={agent} className="vbtn" onClick={() => onSimulate(agent)} style={{
               padding: '6px 14px', borderRadius: '6px', fontSize: '12px', fontWeight: 600,
-              background: '#09090b', color: '#fff', border: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px',
+              background: 'var(--accent)', color: 'var(--on-accent)', border: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px',
             }}>
               🤖 {agent.charAt(0).toUpperCase() + agent.slice(1)}
             </button>
@@ -96,7 +96,7 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
       {/* ── Time-series chart ── */}
       <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px', padding: '18px 20px', marginBottom: '20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '12px' }}>
-          <span style={{ fontSize: '13px', fontWeight: 600, color: '#09090b' }}>{t('Hourly Traffic', 'Saatlik Trafik')}</span>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>{t('Hourly Traffic', 'Saatlik Trafik')}</span>
           <span style={{ fontSize: '11px', color: '#a1a1aa' }}>{t('last 24 h · refreshes every 30 s', 'son 24 sa · 30 sn’de bir yenilenir')}</span>
         </div>
         <TimeSeriesChart buckets={stats?.hourly_buckets ?? []} />
@@ -107,7 +107,7 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
 
         <div style={{ padding: '14px 20px', borderBottom: '1px solid #e4e4e7' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-            <span style={{ fontSize: '13px', fontWeight: 600, color: '#09090b' }}>{t('Requests', 'İstekler')}</span>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>{t('Requests', 'İstekler')}</span>
             <span style={{ fontSize: '11px', color: '#a1a1aa', fontVariantNumeric: 'tabular-nums' }}>
               {hasFilter ? t(`${filteredEvents.length} of ${total} shown`, `${total} olaydan ${filteredEvents.length} tanesi`) : t(`${total} events`, `${total} olay`)}
             </span>
@@ -135,7 +135,7 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
               onChange={e => setPathQuery(e.target.value)}
               style={{
                 padding: '3px 10px', borderRadius: '4px', fontSize: '11px',
-                border: '1px solid #e4e4e7', background: '#fafafa', color: '#09090b',
+                border: '1px solid #e4e4e7', background: '#fafafa', color: 'var(--ink)',
                 fontFamily: 'ui-monospace, monospace', width: '160px',
               }}
             />
@@ -153,7 +153,7 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
           <div style={{ padding: '56px', textAlign: 'center', color: '#a1a1aa', fontSize: '13px' }}>{t('Loading…', 'Yükleniyor…')}</div>
         ) : total === 0 ? (
           <div style={{ padding: '48px 24px', textAlign: 'center' }}>
-            <div style={{ fontSize: '14px', fontWeight: 600, color: '#09090b', marginBottom: '6px' }}>{t('No requests recorded yet', 'Henüz istek kaydedilmedi')}</div>
+            <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', marginBottom: '6px' }}>{t('No requests recorded yet', 'Henüz istek kaydedilmedi')}</div>
             <div style={{ fontSize: '12.5px', color: '#71717a', marginBottom: '16px' }}>
               {t('Simulate AI agents visiting your store in real-time using the buttons below:', 'Aşağıdaki butonlarla mağazanızı ziyaret eden AI ajanlarını gerçek zamanlı simüle edin:')}
             </div>
@@ -161,7 +161,7 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
               {['chatgpt', 'claude', 'perplexity'].map(agent => (
                 <button key={agent} className="vbtn" onClick={() => onSimulate(agent)} style={{
                   padding: '8px 16px', borderRadius: '6px', fontSize: '12px', fontWeight: 600,
-                  background: '#09090b', color: '#fff', border: 'none', cursor: 'pointer',
+                  background: 'var(--accent)', color: 'var(--on-accent)', border: 'none', cursor: 'pointer',
                   display: 'inline-flex', alignItems: 'center', gap: '5px',
                 }}>
                   🤖 {t('Simulate', 'Simüle et:')} {agent.charAt(0).toUpperCase() + agent.slice(1)}
@@ -206,7 +206,7 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
                       <td style={{ padding: '10px 16px', color: '#71717a', whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums', fontFamily: 'ui-monospace, monospace', fontSize: '12px' }}>
                         {new Date(e.ts.endsWith('Z') ? e.ts : e.ts + 'Z').toLocaleTimeString('en-GB')}
                       </td>
-                      <td style={{ padding: '10px 16px', fontFamily: 'ui-monospace, monospace', fontWeight: 700, fontSize: '11px', color: '#09090b', letterSpacing: '0.04em' }}>
+                      <td style={{ padding: '10px 16px', fontFamily: 'ui-monospace, monospace', fontWeight: 700, fontSize: '11px', color: 'var(--ink)', letterSpacing: '0.04em' }}>
                         {e.method}
                       </td>
                       <td style={{ padding: '10px 16px', fontFamily: 'ui-monospace, monospace', color: '#3f3f46', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '12px' }} title={e.path}>

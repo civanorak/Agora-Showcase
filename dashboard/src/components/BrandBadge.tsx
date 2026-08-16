@@ -20,8 +20,8 @@ export function BrandBadge({ size = 30 }: Props) {
     >
       <defs>
         <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#6366f1" />
-          <stop offset="1" stopColor="#8b93f8" />
+          <stop offset="0" stopColor="#35857b" />
+          <stop offset="1" stopColor="#57b3a6" />
         </linearGradient>
       </defs>
       <rect x="0" y="0" width="100" height="100" rx="24" fill={`url(#${gid})`} />

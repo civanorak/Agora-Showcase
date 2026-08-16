@@ -26,7 +26,7 @@ export function LanguageToggle() {
               padding: '5px 11px', fontSize: '11.5px', fontWeight: 700, letterSpacing: '0.03em',
               border: 'none', cursor: 'pointer', transition: 'color 120ms, background 120ms',
               background: isActive ? '#fafafa' : 'transparent',
-              color: isActive ? '#09090b' : '#a1a1aa',
+              color: isActive ? 'var(--ink)' : '#a1a1aa',
             }}
             onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = '#fafafa' }}
             onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = '#a1a1aa' }}

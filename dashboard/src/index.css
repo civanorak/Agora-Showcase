@@ -1,2 +1,47 @@
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #fafafa; }
+:root {
+  /* ── Surfaces ─────────────────────────────────────────────── */
+  --bg: #f6f5f2;            /* warm paper — page background */
+  --surface: #ffffff;       /* cards */
+  --bar-bg: #fbfbf9;        /* top app bar (was near-black) */
+  --bar-glass: rgba(251, 251, 249, 0.58);  /* translucent bar once scrolled */
+  --border: #e7e4de;        /* hairlines */
+  --panel: #eef0ee;         /* soft neutral panel */
+
+  /* ── Text ─────────────────────────────────────────────────── */
+  --ink: #2c2c31;           /* primary text (softened from #09090b) */
+  --muted: #6f6e6a;         /* secondary text */
+  --muted-soft: #a2a09a;    /* tertiary / captions */
+
+  /* ── Accent: calm corporate teal (no neon, no indigo) ─────── */
+  --accent: #35857b;
+  --accent-hover: #2c7369;
+  --accent-strong: #245f57;
+  --accent-tint: #e8f1ef;   /* subtle accent background */
+  --on-accent: #ffffff;
+
+  /* ── Secondary warm accent, used sparingly for life ───────── */
+  --sand: #b98a4b;
+  --sand-tint: #f4ecdf;
+}
+
+* , *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Smooth, restrained motion everywhere — respect reduced-motion. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

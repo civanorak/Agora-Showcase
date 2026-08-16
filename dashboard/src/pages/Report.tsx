@@ -52,7 +52,7 @@ function ScoreHero({ result }: { result: AuditResult }) {
         Yapay Zekâ Hazırlığı
       </div>
       <div style={{ display: 'flex', alignItems: 'flex-end', gap: '14px', marginTop: '10px' }}>
-        <span style={{ fontSize: '64px', fontWeight: 800, lineHeight: 0.9, color, letterSpacing: '-0.03em' }}>{value}</span>
+        <span style={{ fontSize: '64px', fontWeight: 600, lineHeight: 0.9, color, letterSpacing: '-0.03em' }}>{value}</span>
         <span style={{ fontSize: '20px', fontWeight: 600, color: '#a1a1aa', paddingBottom: '8px' }}>/ 100</span>
         <span style={{
           marginLeft: 'auto', fontSize: '13px', fontWeight: 700, color,
@@ -74,7 +74,7 @@ function ProductVisibility({ catalog }: { catalog: CatalogInfo }) {
 
   return (
     <div style={CARD}>
-      <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#09090b', margin: 0 }}>
+      <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', margin: 0 }}>
         Ürünlerinizin kaçını görebiliyorlar?
       </h3>
 
@@ -108,7 +108,7 @@ function ProductVisibility({ catalog }: { catalog: CatalogInfo }) {
   )
 }
 
-function Stat({ label, value, color = '#09090b' }: { label: string; value: string; color?: string }) {
+function Stat({ label, value, color = 'var(--ink)' }: { label: string; value: string; color?: string }) {
   return (
     <div>
       <div style={{ fontSize: '11px', fontWeight: 600, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.07em' }}>{label}</div>
@@ -121,7 +121,7 @@ function Stat({ label, value, color = '#09090b' }: { label: string; value: strin
 function PlainChecklist({ result }: { result: AuditResult }) {
   return (
     <div style={CARD}>
-      <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#09090b', margin: '0 0 18px' }}>Neler yolunda, neler değil?</h3>
+      <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', margin: '0 0 18px' }}>Neler yolunda, neler değil?</h3>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {CHECK_ORDER.map(key => {
           const pass = result.checklist[key].pass_status
@@ -135,7 +135,7 @@ function PlainChecklist({ result }: { result: AuditResult }) {
                 background: pass ? '#22c55e' : '#ef4444',
               }}>{pass ? '✓' : '✕'}</span>
               <div>
-                <div style={{ fontSize: '13.5px', fontWeight: 600, color: '#09090b' }}>{copy.title}</div>
+                <div style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--ink)' }}>{copy.title}</div>
                 <div style={{ fontSize: '12.5px', color: '#71717a', marginTop: '2px', lineHeight: 1.45 }}>
                   {pass ? copy.pass : copy.fail}
                 </div>
@@ -151,7 +151,7 @@ function PlainChecklist({ result }: { result: AuditResult }) {
 // ── Section 4 · Düzeltme adımları ─────────────────────────────────────────────
 function FixSteps() {
   return (
-    <div style={{ ...CARD, background: '#09090b', border: '1px solid #27272a' }}>
+    <div style={{ ...CARD, background: 'var(--ink)', border: '1px solid #27272a' }}>
       <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#fafafa', margin: '0 0 12px' }}>İki adımda düzeltin</h3>
       <ol style={{ margin: 0, padding: '0 0 0 20px', fontSize: '13px', color: '#d4d4d8', lineHeight: 1.7 }}>
         <li>Aşağıda hazırladığımız ürün listesini mağazanıza ekleyin — tüm ürünlerinizi asistanlara tek seferde açar.</li>
@@ -175,15 +175,15 @@ function GeneratedList({ result, onRequestFull }: { result: AuditResult; onReque
 
   const tabBtn = (active: boolean): React.CSSProperties => ({
     padding: '6px 13px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer',
-    border: `1px solid ${active ? '#09090b' : '#e4e4e7'}`,
-    background: active ? '#09090b' : '#fff', color: active ? '#fff' : '#71717a',
+    border: `1px solid ${active ? 'var(--ink)' : '#e4e4e7'}`,
+    background: active ? 'var(--ink)' : '#fff', color: active ? '#fff' : '#71717a',
   })
 
   return (
     <div style={{ ...CARD, padding: 0, overflow: 'hidden' }}>
       <div style={{ padding: '14px 18px', borderBottom: '1px solid #e4e4e7', background: '#fafafa', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
         <div>
-          <div style={{ fontSize: '13.5px', fontWeight: 700, color: '#09090b' }}>Yapay zekâ için hazırlanmış ürün listesi</div>
+          <div style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--ink)' }}>Yapay zekâ için hazırlanmış ürün listesi</div>
           <div style={{ fontSize: '11.5px', color: '#a1a1aa', marginTop: '2px' }}>
             {view === 'list' ? 'Mağazanıza eklenecek dosyanın önizlemesi' : 'Bir asistanın şu an sayfanızda gördüğü içerik'}
           </div>
@@ -218,7 +218,7 @@ function GeneratedList({ result, onRequestFull }: { result: AuditResult; onReque
               : ' — listenin tamamı gizlendi.'}{' '}
             Tam liste, kurulum paketiyle birlikte teslim edilir.
           </p>
-          <button className="vbtn" onClick={onRequestFull} style={{ padding: '8px 16px', borderRadius: '6px', fontSize: '12.5px', fontWeight: 600, border: 'none', background: '#09090b', color: '#fff', cursor: 'pointer' }}>
+          <button className="vbtn" onClick={onRequestFull} style={{ padding: '8px 16px', borderRadius: '6px', fontSize: '12.5px', fontWeight: 600, border: 'none', background: 'var(--accent)', color: 'var(--on-accent)', cursor: 'pointer' }}>
             Tam listeyi isteyin
           </button>
         </div>
@@ -254,7 +254,7 @@ function EmailCapture({ url, coveragePct }: { url: string; coveragePct: number |
 
   return (
     <div id="lead-capture" style={CARD}>
-      <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#09090b', margin: '0 0 4px' }}>Tam listeyi ve kurulum adımlarını gönderelim</h3>
+      <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', margin: '0 0 4px' }}>Tam listeyi ve kurulum adımlarını gönderelim</h3>
       <p style={{ fontSize: '12.5px', color: '#71717a', margin: '0 0 14px', lineHeight: 1.5 }}>
         E-postanızı bırakın; bu raporu, tam ürün listesini ve mağazanızı asistanlara açmak için gereken adımları iletelim.
       </p>
@@ -267,7 +267,7 @@ function EmailCapture({ url, coveragePct }: { url: string; coveragePct: number |
           style={{ flex: 1, minWidth: '220px', padding: '10px 13px', borderRadius: '7px', border: '1px solid #e4e4e7', fontSize: '13px' }}
         />
         <button className="vbtn" onClick={submit} disabled={status === 'submitting'}
-          style={{ padding: '10px 20px', borderRadius: '7px', fontSize: '13px', fontWeight: 600, background: '#09090b', color: '#fff', border: 'none', cursor: 'pointer' }}>
+          style={{ padding: '10px 20px', borderRadius: '7px', fontSize: '13px', fontWeight: 600, background: 'var(--accent)', color: 'var(--on-accent)', border: 'none', cursor: 'pointer' }}>
           {status === 'submitting' ? 'Gönderiliyor…' : 'Gönder'}
         </button>
       </div>
@@ -282,7 +282,7 @@ function LiveVisitorsLocked({ onInstall }: { onInstall: () => void }) {
     <div style={{ ...CARD, position: 'relative', overflow: 'hidden' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <span style={{ fontSize: '15px' }}>🔒</span>
-        <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#09090b', margin: 0 }}>Canlı ziyaretçiler</h3>
+        <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', margin: 0 }}>Canlı ziyaretçiler</h3>
       </div>
       <p style={{ fontSize: '13px', color: '#71717a', margin: '10px 0 0', lineHeight: 1.55, maxWidth: '560px' }}>
         Kısa kurulumdan sonra <strong style={{ color: '#3f3f46' }}>ChatGPT, Claude, Perplexity</strong> gibi asistanların
@@ -300,7 +300,7 @@ function LiveVisitorsLocked({ onInstall }: { onInstall: () => void }) {
       </div>
 
       <button className="vbtn" onClick={onInstall}
-        style={{ marginTop: '18px', padding: '10px 20px', borderRadius: '7px', fontSize: '13px', fontWeight: 600, background: '#09090b', color: '#fff', border: 'none', cursor: 'pointer' }}>
+        style={{ marginTop: '18px', padding: '10px 20px', borderRadius: '7px', fontSize: '13px', fontWeight: 600, background: 'var(--accent)', color: 'var(--on-accent)', border: 'none', cursor: 'pointer' }}>
         Kurulumu başlat
       </button>
     </div>
@@ -337,7 +337,7 @@ function Row({ label, value }: { label: string; value: string }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px' }}>
       <span style={{ color: '#71717a' }}>{label}</span>
-      <strong style={{ color: '#09090b', fontVariantNumeric: 'tabular-nums' }}>{value}</strong>
+      <strong style={{ color: 'var(--ink)', fontVariantNumeric: 'tabular-nums' }}>{value}</strong>
     </div>
   )
 }

@@ -41,7 +41,7 @@ export function StatCard({ label, value, note }: { label: string; value: number 
       <div style={{ fontSize: '11px', fontWeight: 600, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
         {label}
       </div>
-      <div style={{ fontSize: '30px', fontWeight: 700, color: '#09090b', marginTop: '8px', lineHeight: 1, letterSpacing: '-0.02em' }}>
+      <div style={{ fontSize: '30px', fontWeight: 700, color: 'var(--ink)', marginTop: '8px', lineHeight: 1, letterSpacing: '-0.02em' }}>
         {value}
       </div>
       {note && <div style={{ fontSize: '12px', color: '#71717a', marginTop: '6px' }}>{note}</div>}
@@ -141,7 +141,7 @@ export function ChecklistItemView({ label, pass, evidence }: { label: string; pa
         {pass ? '✓' : '✗'}
       </span>
       <div>
-        <div style={{ fontSize: '12.5px', fontWeight: 600, color: '#09090b' }}>{label}</div>
+        <div style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--ink)' }}>{label}</div>
         <div style={{ fontSize: '11px', color: '#71717a', marginTop: '2px' }}>{evidence}</div>
       </div>
     </div>

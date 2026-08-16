@@ -39,7 +39,7 @@ export function Admin() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
       <div>
-        <h1 style={{ fontSize: '20px', fontWeight: 700, color: '#09090b', margin: 0, letterSpacing: '-0.02em' }}>
+        <h1 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--ink)', margin: 0, letterSpacing: '-0.02em' }}>
           {t('Leads', 'Kayıtlar')}
         </h1>
         <p style={{ fontSize: '13px', color: '#71717a', margin: '5px 0 0', lineHeight: 1.5 }}>
@@ -55,7 +55,7 @@ export function Admin() {
         padding: '28px 32px', textAlign: 'center',
       }}>
         <div style={{ fontSize: '26px', marginBottom: '10px' }}>🔒</div>
-        <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#09090b', margin: '0 0 8px' }}>
+        <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--ink)', margin: '0 0 8px' }}>
           {t('Admin-only · coming soon', 'Yalnızca yönetici · yakında')}
         </h3>
         <p style={{ fontSize: '13px', color: '#71717a', lineHeight: 1.6, margin: '0 auto', maxWidth: '520px' }}>
@@ -84,7 +84,7 @@ export function Admin() {
             disabled={status === 'loading' || !token.trim()}
             style={{
               padding: '10px 20px', borderRadius: '6px', fontSize: '13px', fontWeight: 600,
-              background: '#09090b', color: '#fff', border: 'none', cursor: 'pointer',
+              background: 'var(--accent)', color: 'var(--on-accent)', border: 'none', cursor: 'pointer',
               minWidth: '110px', textAlign: 'center',
             }}
           >
@@ -116,7 +116,7 @@ export function Admin() {
               <tbody>
                 {leads.map(lead => (
                   <tr key={lead.id} style={{ borderBottom: '1px solid #f4f4f5' }}>
-                    <td style={{ padding: '10px 16px', color: '#09090b', fontWeight: 600 }}>{lead.email}</td>
+                    <td style={{ padding: '10px 16px', color: 'var(--ink)', fontWeight: 600 }}>{lead.email}</td>
                     <td style={{ padding: '10px 16px', color: '#52525b', fontFamily: 'ui-monospace, monospace' }}>{lead.url ?? '—'}</td>
                     <td style={{ padding: '10px 16px', textAlign: 'right', color: coverageColor(lead.coverage_pct), fontWeight: 700 }}>
                       {lead.coverage_pct !== null ? `${lead.coverage_pct}%` : '—'}
