@@ -1,10 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import type { AgoraEvent, AuditResult, BenchmarkData, DemandData, StatsData } from './types'
 import { Landing } from './pages/Landing'
-import { Feed } from './pages/Feed'
-import { Auditor } from './pages/Auditor'
-import { Intelligence } from './pages/Intelligence'
-import { Admin } from './pages/Admin'
+
+// Only Landing paints on first load. The rest are split into their own chunks
+// so the initial mobile download and parse stay small.
+const Feed = lazy(() => import('./pages/Feed').then(m => ({ default: m.Feed })))
+const Auditor = lazy(() => import('./pages/Auditor').then(m => ({ default: m.Auditor })))
+const Intelligence = lazy(() => import('./pages/Intelligence').then(m => ({ default: m.Intelligence })))
+const Admin = lazy(() => import('./pages/Admin').then(m => ({ default: m.Admin })))
 import { BrandBadge } from './components/BrandBadge'
 import { LanguageToggle } from './components/LanguageToggle'
 import { useI18n } from './i18n'
@@ -288,7 +291,7 @@ export default function App() {
         boxShadow: isScrolled ? '0 1px 3px rgba(0,0,0,0.05)' : 'none',
         transition: 'background 240ms ease, box-shadow 240ms ease, border-color 240ms ease',
       }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 32px', height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '24px' }}>
+        <div className="app-header-inner">
           {/* brand — click returns to the Overview / landing page */}
           <button
             onClick={() => setCurrentTab('landing')}
@@ -300,71 +303,78 @@ export default function App() {
           >
             <BrandBadge size={28} />
             <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--ink)', letterSpacing: '-0.01em' }}>AGORA</span>
-            <span style={{ width: '1px', height: '15px', background: 'var(--border)' }} />
-            <span style={{ fontSize: '12px', color: 'var(--muted)', letterSpacing: '0.01em' }}>{t('AI Traffic Analytics', 'AI Trafik Analitiği')}</span>
+            <span className="brand-separator" style={{ width: '1px', height: '15px', background: 'var(--border)' }} />
+            <span className="brand-subtext" style={{ fontSize: '12px', color: 'var(--muted)', letterSpacing: '0.01em' }}>{t('AI Traffic Analytics', 'AI Trafik Analitiği')}</span>
           </button>
-          {/* nav + language switch */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
-          <nav style={{ display: 'flex', alignItems: 'center', gap: '4px', overflowX: 'auto' }}>
-            {tabs.map(tab => {
-              const isActive = currentTab === tab.id
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setCurrentTab(tab.id)}
-                  style={{
-                    padding: '7px 12px', fontSize: '13px', fontWeight: 600, whiteSpace: 'nowrap',
-                    border: 'none', borderRadius: '7px', cursor: 'pointer', transition: 'color 160ms ease, background 160ms ease',
-                    background: isActive ? 'var(--accent-tint)' : 'transparent',
-                    color: isActive ? 'var(--accent-strong)' : 'var(--muted)',
-                  }}
-                  onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = 'var(--ink)' }}
-                  onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = 'var(--muted)' }}
-                >
-                  {tab.label}
-                </button>
-              )
-            })}
-          </nav>
-          <LanguageToggle />
+
+          {/* Language toggle on mobile / desktop */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <LanguageToggle />
+          </div>
+
+          {/* nav in responsive wrapper */}
+          <div className="app-nav-wrapper" style={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
+            <nav className="app-nav">
+              {tabs.map(tab => {
+                const isActive = currentTab === tab.id
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setCurrentTab(tab.id)}
+                    style={{
+                      padding: '7px 12px', fontSize: '13px', fontWeight: 600, whiteSpace: 'nowrap',
+                      border: 'none', borderRadius: '7px', cursor: 'pointer', transition: 'color 160ms ease, background 160ms ease',
+                      background: isActive ? 'var(--accent-tint)' : 'transparent',
+                      color: isActive ? 'var(--accent-strong)' : 'var(--muted)',
+                    }}
+                    onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = 'var(--ink)' }}
+                    onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = 'var(--muted)' }}
+                  >
+                    {tab.label}
+                  </button>
+                )
+              })}
+            </nav>
           </div>
         </div>
       </header>
 
-      <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '16px 32px' }}>
-        {currentTab === 'landing' ? (
-          <Landing
-            auditUrl={auditUrl}
-            onAuditUrlChange={setAuditUrl}
-            onAudit={handleAudit}
-            isAuditLoading={isAuditLoading}
-            auditError={auditError}
-            onOpenFeed={() => setCurrentTab('feed')}
-            onOpenAuditor={() => setCurrentTab('auditor')}
-          />
-        ) : currentTab === 'feed' ? (
-          <Feed
-            events={events}
-            stats={stats}
-            isLoading={isLoading}
-            streamMode={streamMode}
-            newIds={newIds}
-            onSimulate={triggerSimulation}
-          />
-        ) : currentTab === 'auditor' ? (
-          <Auditor
-            auditUrl={auditUrl}
-            onAuditUrlChange={setAuditUrl}
-            onAudit={handleAudit}
-            isAuditLoading={isAuditLoading}
-            auditError={auditError}
-            auditResult={auditResult}
-          />
-        ) : currentTab === 'intelligence' ? (
-          <Intelligence demand={demand} benchmark={benchmark} isLoading={isIntelLoading} />
-        ) : (
-          <Admin />
-        )}
+      <main className="app-main">
+        <Suspense fallback={<div style={{ padding: '48px 0', textAlign: 'center', color: 'var(--muted)', fontSize: '13px' }}>{t('Loading…', 'Yükleniyor…')}</div>}>
+          {currentTab === 'landing' ? (
+            <Landing
+              auditUrl={auditUrl}
+              onAuditUrlChange={setAuditUrl}
+              onAudit={handleAudit}
+              isAuditLoading={isAuditLoading}
+              auditError={auditError}
+              onOpenFeed={() => setCurrentTab('feed')}
+              onOpenAuditor={() => setCurrentTab('auditor')}
+            />
+          ) : currentTab === 'feed' ? (
+            <Feed
+              events={events}
+              stats={stats}
+              isLoading={isLoading}
+              streamMode={streamMode}
+              newIds={newIds}
+              onSimulate={triggerSimulation}
+            />
+          ) : currentTab === 'auditor' ? (
+            <Auditor
+              auditUrl={auditUrl}
+              onAuditUrlChange={setAuditUrl}
+              onAudit={handleAudit}
+              isAuditLoading={isAuditLoading}
+              auditError={auditError}
+              auditResult={auditResult}
+            />
+          ) : currentTab === 'intelligence' ? (
+            <Intelligence demand={demand} benchmark={benchmark} isLoading={isIntelLoading} />
+          ) : (
+            <Admin />
+          )}
+        </Suspense>
       </main>
     </div>
   )

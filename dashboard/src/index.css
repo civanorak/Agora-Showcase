@@ -45,3 +45,253 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Responsive Layout & Header ───────────────────────── */
+.app-header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.app-main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px 32px 48px;
+}
+
+.app-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.app-nav::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Responsive Grids & Sections ──────────────────────── */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 48px;
+  align-items: center;
+  min-height: 440px;
+  position: relative;
+}
+
+.hero-title {
+  font-size: clamp(30px, 5.5vw, 48px);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.08;
+  margin: 0 0 20px;
+  letter-spacing: -0.03em;
+}
+
+.hero-desc {
+  font-size: clamp(14px, 2.2vw, 16px);
+  color: #52525b;
+  line-height: 1.65;
+  margin: 0 0 28px;
+  max-width: 480px;
+}
+
+.input-action-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  max-width: 520px;
+  margin-bottom: 14px;
+}
+
+.shift-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.pipeline-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+}
+
+.checklist-outer-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1.8fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.checklist-inner-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.auditor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.mockup-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 240px;
+  background: #fff;
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-scroll-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+.quick-targets-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.card-padded {
+  background: #fff;
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+  padding: 20px 24px;
+}
+
+.landing-container {
+  display: flex;
+  flex-direction: column;
+  gap: 88px;
+}
+
+@media (max-width: 960px) {
+  .auditor-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 36px !important;
+    min-height: auto !important;
+  }
+  .shift-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+  .checklist-outer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+    padding: 24px 18px !important;
+  }
+  .landing-container {
+    gap: 60px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-header-inner {
+    padding: 0 16px !important;
+    height: auto !important;
+    min-height: 56px !important;
+    flex-wrap: wrap !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    gap: 10px !important;
+  }
+  .app-main {
+    padding: 16px 14px 40px !important;
+  }
+  .brand-subtext {
+    display: none !important;
+  }
+  .brand-separator {
+    display: none !important;
+  }
+  .app-nav-wrapper {
+    width: 100% !important;
+    order: 3 !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 2px !important;
+  }
+  .app-nav {
+    width: max-content !important;
+  }
+  .pipeline-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .pricing-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+  .footer-inner {
+    flex-direction: column !important;
+    gap: 12px !important;
+    text-align: center !important;
+  }
+  .input-action-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+  }
+  .input-action-row button {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+  .input-action-row input {
+    width: 100% !important;
+  }
+  .mockup-card-grid {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+  }
+  .mockup-card-grid > div:first-child {
+    border-right: none !important;
+    border-bottom: 1px solid #f4f4f5 !important;
+  }
+  .card-padded {
+    padding: 16px 16px !important;
+  }
+  .landing-container {
+    gap: 48px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .checklist-inner-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+}

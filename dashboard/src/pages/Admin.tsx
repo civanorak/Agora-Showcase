@@ -66,8 +66,8 @@ export function Admin() {
         </p>
       </div>
 
-      <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px', padding: '20px 24px' }}>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+      <div className="card-padded">
+        <div className="input-action-row">
           <input
             type="password"
             value={token}
@@ -104,10 +104,11 @@ export function Admin() {
           {leads.length === 0 ? (
             <div style={{ padding: '24px', fontSize: '13px', color: '#71717a' }}>{t('No leads captured yet.', 'Henüz kayıt toplanmadı.')}</div>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12.5px' }}>
-              <thead>
-                <tr style={{ background: '#fafafa', borderBottom: '1px solid #e4e4e7' }}>
-                  <th style={{ textAlign: 'left', padding: '10px 16px', color: '#71717a', fontWeight: 600 }}>{t('Email', 'E-posta')}</th>
+            <div className="table-scroll-container">
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12.5px' }}>
+                <thead>
+                  <tr style={{ background: '#fafafa', borderBottom: '1px solid #e4e4e7' }}>
+                    <th style={{ textAlign: 'left', padding: '10px 16px', color: '#71717a', fontWeight: 600 }}>{t('Email', 'E-posta')}</th>
                   <th style={{ textAlign: 'left', padding: '10px 16px', color: '#71717a', fontWeight: 600 }}>URL</th>
                   <th style={{ textAlign: 'right', padding: '10px 16px', color: '#71717a', fontWeight: 600 }}>{t('Coverage', 'Kapsam')}</th>
                   <th style={{ textAlign: 'left', padding: '10px 16px', color: '#71717a', fontWeight: 600 }}>{t('Captured', 'Toplandı')}</th>
@@ -126,6 +127,7 @@ export function Admin() {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </div>
       )}

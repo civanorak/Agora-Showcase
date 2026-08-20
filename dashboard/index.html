@@ -4,11 +4,53 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#6366f1" />
+    <meta name="theme-color" content="#35857b" />
     <title>AGORA — AI Traffic Dashboard</title>
+    <style>
+      /* First-paint loader — inline so it shows before the JS bundle arrives.
+         React replaces #root on mount, so this disappears on its own. */
+      #agora-boot {
+        position: fixed; inset: 0;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 18px;
+        background: #f6f5f2;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+      #agora-boot .ring {
+        width: 40px; height: 40px; border-radius: 50%;
+        border: 3px solid #e7e4de; border-top-color: #35857b;
+        animation: agora-spin 0.8s linear infinite;
+      }
+      #agora-boot .label { font-size: 13px; color: #6f6e6a; letter-spacing: 0.02em; }
+      @keyframes agora-spin { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) {
+        #agora-boot .ring { animation: none; }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="agora-boot">
+        <svg width="52" height="52" viewBox="0 0 100 100" role="img" aria-label="AGORA">
+          <defs>
+            <linearGradient id="agoraBootGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#35857b" />
+              <stop offset="1" stop-color="#57b3a6" />
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="100" height="100" rx="24" fill="url(#agoraBootGrad)" />
+          <path d="M50 24 L74 42 H26 Z" fill="#ffffff" />
+          <rect x="26" y="45" width="48" height="5" rx="1.6" fill="#ffffff" />
+          <rect x="30.5" y="53" width="5.5" height="20" rx="1.4" fill="#ffffff" />
+          <rect x="41.7" y="53" width="5.5" height="20" rx="1.4" fill="#ffffff" />
+          <rect x="52.9" y="53" width="5.5" height="20" rx="1.4" fill="#ffffff" />
+          <rect x="64.1" y="53" width="5.5" height="20" rx="1.4" fill="#ffffff" />
+          <rect x="24" y="74.5" width="52" height="6" rx="2" fill="#ffffff" />
+        </svg>
+        <div class="ring"></div>
+        <div class="label">Loading AGORA…</div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

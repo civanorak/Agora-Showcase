@@ -66,7 +66,7 @@ function DemandPanel({ demand, isLoading }: { demand: DemandData | null; isLoadi
         badge={<DemoBadge />}
       />
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '12px', marginBottom: '16px' }}>
         <StatCard label={t('Agent Requests', 'Ajan İstekleri')} value={totalHits} />
         <StatCard label={t('Products Asked', 'Sorulan Ürünler')} value={products.length} />
         <StatCard
@@ -87,7 +87,7 @@ function DemandPanel({ demand, isLoading }: { demand: DemandData | null; isLoadi
             )}
           </EmptyRow>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
+          <div className="table-scroll-container">
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12.5px' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #e4e4e7' }}>
@@ -221,7 +221,7 @@ function BenchmarkTable({ benchmark, board }: { benchmark: BenchmarkData | null;
       )}
 
       <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px', overflow: 'hidden' }}>
-        <div style={{ overflowX: 'auto' }}>
+        <div className="table-scroll-container">
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12.5px' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #e4e4e7' }}>

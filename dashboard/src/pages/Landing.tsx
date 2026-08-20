@@ -76,23 +76,20 @@ export function Landing({
   ]
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '88px' }}>
+    <div className="landing-container">
 
       {/* ── Hero ── */}
-      <section style={{
-        display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: '48px',
-        alignItems: 'center', minHeight: '440px', position: 'relative',
-      }}>
+      <section className="hero-grid">
         <div>
           <div style={{ marginBottom: '24px' }}>
             <BrandBadge size={52} />
           </div>
 
-          <h1 style={{ fontSize: '48px', fontWeight: 600, color: 'var(--ink)', lineHeight: 1.05, margin: '0 0 20px', letterSpacing: '-0.03em' }}>
+          <h1 className="hero-title">
             {t('Your next customer', 'Bir sonraki müşteriniz')}<br />{t("isn't human.", 'insan değil.')}
           </h1>
 
-          <p style={{ fontSize: '16px', color: '#52525b', lineHeight: 1.65, margin: '0 0 32px', maxWidth: '480px' }}>
+          <p className="hero-desc">
             {t(
               "When a shopper asks ChatGPT “where can I buy this,” an AI agent quietly visits your store to answer — but it can't run your JavaScript, so it never sees your products. AGORA reveals those visits and rewrites your catalog into a single file agents can actually read.",
               'Bir alıcı ChatGPT’ye “bunu nereden alabilirim” diye sorduğunda, cevabı bulmak için mağazanıza sessizce bir AI ajanı uğrar — ama JavaScript’inizi çalıştıramadığından ürünlerinizi hiç göremez. AGORA bu ziyaretleri gözler önüne serer ve kataloğunuzu, ajanların gerçekten okuyabileceği tek bir dosyaya dönüştürür.',
@@ -100,7 +97,7 @@ export function Landing({
           </p>
 
           {/* Live audit input — the demo starts here */}
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', maxWidth: '520px', marginBottom: '14px' }}>
+          <div className="input-action-row">
             <input
               type="text"
               value={auditUrl}
@@ -135,7 +132,7 @@ export function Landing({
             </div>
           )}
 
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
             <span style={{ fontSize: '11px', color: '#a1a1aa' }}>{t('See it live:', 'Canlı görün:')}</span>
             <button className="qbtn" onClick={onOpenFeed}>{t('Open live feed →', 'Canlı akışı aç →')}</button>
             <button className="qbtn" onClick={onOpenAuditor}>{t('Try the auditor →', 'Denetleyiciyi dene →')}</button>
@@ -160,7 +157,7 @@ export function Landing({
               </span>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', height: '240px', background: '#fff' }}>
+            <div className="mockup-card-grid">
               <div style={{ borderRight: '1px solid #f4f4f5', padding: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ fontSize: '10px', fontWeight: 700, color: '#b91c1c', textTransform: 'uppercase', marginBottom: '8px' }}>
                   {t('Without AGORA', 'AGORA olmadan')}
@@ -231,7 +228,7 @@ export function Landing({
         }}>
           {t('Agent signatures detected out of the box', 'Kutudan çıktığı gibi tespit edilen ajan imzaları')}
         </p>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', alignItems: 'center', flexWrap: 'wrap', padding: '0 32px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', alignItems: 'center', flexWrap: 'wrap', padding: '0 16px' }}>
           {DETECTED_AGENTS.map(a => (
             <span key={a} style={{
               fontSize: '11.5px', fontWeight: 600, color: '#3f3f46', fontFamily: 'ui-monospace, monospace',
@@ -244,9 +241,7 @@ export function Landing({
       </section>
 
       {/* ── The shift: why this matters now (real Cloudflare data) ── */}
-      <section style={{
-        display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', alignItems: 'center',
-      }}>
+      <section className="shift-grid">
         <div>
           <span style={{ fontSize: '10px', fontWeight: 700, color: '#b45309', textTransform: 'uppercase', letterSpacing: '0.15em', display: 'block', marginBottom: '12px' }}>
             {t('Why now', 'Neden şimdi')}
@@ -313,9 +308,9 @@ export function Landing({
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
+        <div className="pipeline-grid">
           {pipelineSteps.map(step => (
-            <div key={step.num} className="stepcard" style={{ border: '1px solid #e4e4e7', borderRadius: '12px', background: '#fff', padding: '28px' }}>
+            <div key={step.num} className="stepcard" style={{ border: '1px solid #e4e4e7', borderRadius: '12px', background: '#fff', padding: '24px' }}>
               <div style={{ fontSize: '32px', fontWeight: 600, color: '#e4e4e7', lineHeight: 1, marginBottom: '16px', fontFamily: 'ui-monospace, monospace' }}>
                 {step.num}
               </div>
@@ -327,8 +322,8 @@ export function Landing({
       </section>
 
       {/* ── Readiness checklist ── */}
-      <section style={{ background: '#fafafa', border: '1px solid #e4e4e7', borderRadius: '16px', padding: '40px 48px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.8fr', gap: '48px', alignItems: 'center' }}>
+      <section style={{ background: '#fafafa', border: '1px solid #e4e4e7', borderRadius: '16px', padding: '32px' }}>
+        <div className="checklist-outer-grid">
           <div>
             <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--ink)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '8px', display: 'inline-block' }}>
               {t('The audit checklist', 'Denetim kontrol listesi')}
@@ -344,7 +339,7 @@ export function Landing({
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          <div className="checklist-inner-grid">
             {checklistFeatures.map(f => (
               <div key={f.title} className="stepcard" style={{ border: '1px solid #e4e4e7', borderRadius: '8px', background: '#fff', padding: '16px 20px' }}>
                 <h4 style={{ fontSize: '13px', fontWeight: 700, color: 'var(--ink)', margin: '0 0 6px', fontFamily: 'ui-monospace, monospace' }}>{f.title}</h4>
@@ -366,8 +361,8 @@ export function Landing({
           </h2>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', maxWidth: '800px', margin: '0 auto' }}>
-          <div style={{ border: '1px solid #e4e4e7', borderRadius: '12px', background: '#fff', padding: '36px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div className="pricing-grid">
+          <div style={{ border: '1px solid #e4e4e7', borderRadius: '12px', background: '#fff', padding: '32px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
               <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--ink)', margin: '0 0 8px' }}>{t('Sandbox', 'Deneme Alanı')}</h3>
               <p style={{ fontSize: '12.5px', color: '#71717a', margin: '0 0 24px' }}>{t('Everything on this page, right now, no signup.', 'Bu sayfadaki her şey, hemen şimdi, kayıt gerekmez.')}</p>
@@ -387,7 +382,7 @@ export function Landing({
             </button>
           </div>
 
-          <div style={{ border: '2px solid var(--ink)', borderRadius: '12px', background: '#fff', padding: '36px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative' }}>
+          <div style={{ border: '2px solid var(--ink)', borderRadius: '12px', background: '#fff', padding: '32px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative' }}>
             <span style={{ position: 'absolute', top: '-12px', right: '20px', background: 'var(--accent)', color: 'var(--on-accent)', fontSize: '9px', fontWeight: 700, padding: '3px 10px', borderRadius: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               {t('Design partner', 'Tasarım ortağı')}
             </span>
@@ -418,8 +413,8 @@ export function Landing({
       </section>
 
       {/* ── Footer ── */}
-      <footer style={{ borderTop: '1px solid #e4e4e7', padding: '40px 0', marginTop: '8px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <footer style={{ borderTop: '1px solid #e4e4e7', padding: '32px 0 16px', marginTop: '8px' }}>
+        <div className="footer-inner">
           <span style={{ fontSize: '12px', color: '#71717a' }}>{t('AGORA — the analytics & storefront layer for AI agents.', 'AGORA — AI ajanları için analitik ve mağaza katmanı.')}</span>
           <span style={{ fontSize: '12px', color: '#a1a1aa' }}>© 2026 AGORA</span>
         </div>

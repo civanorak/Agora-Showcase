@@ -250,8 +250,8 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
       </div>
 
       {/* Audit input */}
-      <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px', padding: '20px 24px' }}>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+      <div className="card-padded">
+        <div className="input-action-row">
           <input
             type="text"
             value={auditUrl}
@@ -276,7 +276,7 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
           </button>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', marginTop: '12px', alignItems: 'center' }}>
+        <div className="quick-targets-row">
           <span style={{ fontSize: '11px', color: '#a1a1aa' }}>{t('Quick targets:', 'Hızlı hedefler:')}</span>
           <button className="qbtn" onClick={() => { onAuditUrlChange('https://books.toscrape.com'); onAudit('https://books.toscrape.com') }}>
             {t('Books to Scrape (Demo Store)', 'Books to Scrape (Demo Mağaza)')}
@@ -296,7 +296,7 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
       {!auditResult && !isAuditLoading && !auditError && (
         <div style={{
           background: '#fff', border: '1px solid #e4e4e7', borderRadius: '12px',
-          padding: '40px 32px', textAlign: 'center', maxWidth: '720px', margin: '16px auto 0',
+          padding: '32px 20px', textAlign: 'center', maxWidth: '720px', margin: '16px auto 0',
         }}>
           <div style={{ fontSize: '32px', marginBottom: '12px' }}>🔍</div>
           <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', margin: '0 0 8px' }}>
@@ -340,12 +340,12 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
             <EmailCaptureCard url={auditResult.url} coveragePct={auditResult.catalog?.coverage_pct ?? null} />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', alignItems: 'start' }}>
+          <div className="auditor-grid">
 
             {/* Left: metrics + checklist */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
-              <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px', padding: '20px 24px' }}>
+              <div className="card-padded">
                 <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)', marginTop: 0, marginBottom: '16px' }}>
                   {t('Computed Crawl Metrics', 'Hesaplanan Tarama Metrikleri')}
                 </h3>
@@ -365,7 +365,7 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
                 </div>
               </div>
 
-              <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px', padding: '20px 24px' }}>
+              <div className="card-padded">
                 <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)', marginTop: 0, marginBottom: '16px' }}>
                   {t('AI Readiness Checklist', 'AI Hazırlık Kontrol Listesi')}
                 </h3>
@@ -394,7 +394,7 @@ export function Auditor({ auditUrl, onAuditUrlChange, onAudit, isAuditLoading, a
               </div>
 
               {/* Install instructions — the takeaway */}
-              <div style={{ background: 'var(--ink)', border: '1px solid #27272a', borderRadius: '8px', padding: '20px 24px' }}>
+              <div className="card-padded" style={{ background: 'var(--ink)', border: '1px solid #27272a' }}>
                 <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#fafafa', marginTop: 0, marginBottom: '10px' }}>
                   {t('Fix it in two steps', 'İki adımda çözün')}
                 </h3>

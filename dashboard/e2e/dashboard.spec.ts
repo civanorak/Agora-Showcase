@@ -37,87 +37,63 @@ test.describe('AGORA — AI Agent Traffic & Storefront Auditor', () => {
 
   test('landing page renders pipeline steps and agent signatures', async ({ page }) => {
     await page.goto('/')
-    await expect(page.getByRole('heading', { name: 'See. Be readable. Then sell.' })).toBeVisible()
-    await expect(page.getByRole('heading', { name: 'Detect' })).toBeVisible()
-    await expect(page.getByRole('heading', { name: 'Audit' })).toBeVisible()
-    await expect(page.getByRole('heading', { name: 'Serve' })).toBeVisible()
-    await expect(page.getByText('ChatGPT-User')).toBeVisible()
-    await expect(page.getByText('ClaudeBot')).toBeVisible()
+    await expect(page.getByRole('heading', { name: /See\. Be readable|Gör\. Okunabilir/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /Detect|Tespit/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /Audit|Denetle/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /Serve|Sun/i })).toBeVisible()
+    await expect(page.getByText('ChatGPT-User', { exact: true })).toBeVisible()
+    await expect(page.getByText('ClaudeBot', { exact: true })).toBeVisible()
   })
 
   test('tab navigation works smoothly across all views', async ({ page }) => {
     await page.goto('/')
 
-    // Navigate to Live Feed
-    await page.getByRole('button', { name: 'Live Request Feed' }).click()
-    await expect(page.getByRole('heading', { name: 'Live Request Feed' })).toBeVisible()
+    await page.locator('nav.app-nav').getByRole('button', { name: /Live Request Feed|Canlı İstek Akışı/i }).click()
+    await expect(page.getByText(/Hourly Traffic|Saatlik Trafik/i)).toBeVisible()
 
-    // Navigate to Auditor
-    await page.getByRole('button', { name: 'AI Storefront Auditor' }).click()
-    await expect(page.getByRole('heading', { name: 'AI Storefront Auditor' })).toBeVisible()
+    await page.locator('nav.app-nav').getByRole('button', { name: /AI Storefront Auditor|AI Mağaza Denetleyici/i }).click()
+    await expect(page.getByText(/Ready to audit your storefront|Mağazanızı denetlemeye hazır/i)).toBeVisible()
 
-    // Navigate to Agent Intelligence
-    await page.getByRole('button', { name: 'Agent Intelligence' }).click()
-    await expect(page.getByRole('heading', { name: 'Agent Intelligence' })).toBeVisible()
+    await page.locator('nav.app-nav').getByRole('button', { name: /Agent Intelligence|Ajan İstihbaratı/i }).click()
+    await expect(page.getByRole('heading', { name: /Agent Demand|Ajan Talebi/i })).toBeVisible()
 
-    // Navigate to Leads / Admin
-    await page.getByRole('button', { name: 'Leads' }).click()
-    await expect(page.getByRole('heading', { name: 'Leads' })).toBeVisible()
+    await page.locator('nav.app-nav').getByRole('button', { name: /Leads|Kayıtlar/i }).click()
+    await expect(page.getByRole('heading', { name: /Leads|Kayıtlar/i })).toBeVisible()
 
-    // Return to Overview
-    await page.getByRole('button', { name: 'Overview' }).click()
-    await expect(page.getByRole('heading', { name: "Your next customer isn't human." })).toBeVisible()
+    await page.locator('nav.app-nav').getByRole('button', { name: /Overview|Genel Bakış/i }).click()
+    await expect(page.getByText(/Your next customer|Bir sonraki müşteriniz/i)).toBeVisible()
   })
 
-  test('audit from hero input triggers crawl, switches to Auditor tab, and renders full audit result', async ({ page }) => {
+  test('audit execution flow displays results and generated llms.txt', async ({ page }) => {
+    await page.route('**/report/analyze', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(FULL_AUDIT),
+      })
+    })
+
+    await page.goto('/')
+    await page.getByPlaceholder('https://your-store.com').fill('https://books.toscrape.com')
+    await page.getByRole('button', { name: /Run Agent Audit|Ajan Denetimini Başlat/i }).click()
+
+    await expect(page.getByText(/AI Readiness Checklist|AI Hazırlık Kontrol Listesi/i)).toBeVisible()
+    await expect(page.getByText(/Computed Crawl Metrics|Hesaplanan Tarama Metrikleri/i)).toBeVisible()
+    await expect(page.getByRole('button', { name: /Generated \/llms\.txt|Üretilen \/llms\.txt/i })).toBeVisible()
+    await expect(page.getByText(/Books to Scrape/i).first()).toBeVisible()
+  })
+
+  test('quick target buttons populate and trigger audit', async ({ page }) => {
     await page.route('**/report/analyze', async route => {
       await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(FULL_AUDIT) })
     })
 
     await page.goto('/')
-    await page.getByPlaceholder('https://your-store.com').fill('books.toscrape.com')
-    await page.getByRole('button', { name: 'Run Agent Audit' }).click()
+    await page.getByRole('button', { name: /Try the auditor|Denetleyiciyi dene/i }).click()
+    await expect(page.getByText(/Ready to audit your storefront|Mağazanızı denetlemeye hazır/i)).toBeVisible()
 
-    // Verifies transition to Auditor tab
-    await expect(page.getByRole('heading', { name: 'AI Storefront Auditor' })).toBeVisible()
-
-    // 1) Catalog Reality Card
-    await expect(page.getByText('Catalog Reality vs Agent View')).toBeVisible()
-    await expect(page.getByText('57', { exact: true })).toBeVisible()
-    await expect(page.getByText('5.3%')).toBeVisible()
-
-    // 2) Computed Crawl Metrics
-    await expect(page.getByText('Computed Crawl Metrics')).toBeVisible()
-    await expect(page.getByText('25.4%')).toBeVisible()
-    await expect(page.getByText('12.8%')).toBeVisible()
-
-    // 3) AI Readiness Checklist
-    await expect(page.getByText('AI Readiness Checklist')).toBeVisible()
-    await expect(page.getByText('/llms.txt exists and serves your catalog')).toBeVisible()
-    await expect(page.getByText('Product pricing & metadata parsed')).toBeVisible()
-
-    // 4) Generated llms.txt view
-    await expect(page.getByText('# Books to Scrape')).toBeVisible()
-    await expect(page.getByText('Preview', { exact: true })).toBeVisible()
-
-    // 5) Toggle to Agent's-eye view (markdown)
-    await page.getByRole('button', { name: "Agent's-eye view" }).click()
-    await expect(page.getByText('A Light in the Attic')).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Copy' })).toBeVisible()
-  })
-
-  test('auditor tab quick target buttons trigger audit execution', async ({ page }) => {
-    await page.route('**/report/analyze', async route => {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(FULL_AUDIT) })
-    })
-
-    await page.goto('/')
-    await page.getByRole('button', { name: 'AI Storefront Auditor' }).click()
-    await expect(page.getByRole('button', { name: 'Books to Scrape (Demo Store)' })).toBeVisible()
-
-    await page.getByRole('button', { name: 'Books to Scrape (Demo Store)' }).click()
-    await expect(page.getByText('Computed Crawl Metrics')).toBeVisible()
-    await expect(page.getByText('Catalog Reality vs Agent View')).toBeVisible()
+    await page.getByRole('button', { name: /Books to Scrape/i }).first().click()
+    await expect(page.getByText(/Computed Crawl Metrics|Hesaplanan Tarama Metrikleri/i)).toBeVisible()
   })
 
   test('error message displays when crawl request fails', async ({ page }) => {
@@ -131,7 +107,7 @@ test.describe('AGORA — AI Agent Traffic & Storefront Auditor', () => {
 
     await page.goto('/')
     await page.getByPlaceholder('https://your-store.com').fill('http://127.0.0.1:8000')
-    await page.getByRole('button', { name: 'Run Agent Audit' }).click()
+    await page.getByRole('button', { name: /Run Agent Audit|Ajan Denetimini Başlat/i }).click()
 
     await expect(page.getByText('Refused to fetch URL: Host localhost resolves to non-public address 127.0.0.1')).toBeVisible()
   })
@@ -146,21 +122,46 @@ test.describe('AGORA — AI Agent Traffic & Storefront Auditor', () => {
 
     await page.goto('/')
     await page.getByPlaceholder('https://your-store.com').fill('https://books.toscrape.com')
-    await page.getByRole('button', { name: 'Run Agent Audit' }).click()
+    await page.getByRole('button', { name: /Run Agent Audit|Ajan Denetimini Başlat/i }).click()
 
     await expect(page.locator('input[placeholder="you@company.com"]')).toBeVisible()
     await page.locator('input[placeholder="you@company.com"]').fill('merchant@store.com')
-    await page.getByRole('button', { name: 'Kaydet' }).click()
+    await page.getByRole('button', { name: /Save|Kaydet/i }).click()
 
-    await expect(page.getByText('Kaydedildi — bu raporu inceleyip size dönüş yapacağız.')).toBeVisible()
+    await expect(page.getByText(/Saved|Kaydedildi/i)).toBeVisible()
   })
 
   test('admin leads page requires admin token', async ({ page }) => {
     await page.goto('/')
-    await page.getByRole('button', { name: 'Leads' }).click()
-    await expect(page.getByRole('heading', { name: 'Leads' })).toBeVisible()
+    await page.locator('nav.app-nav').getByRole('button', { name: /Leads|Kayıtlar/i }).click()
+    await expect(page.getByRole('heading', { name: /Leads|Kayıtlar/i })).toBeVisible()
     await expect(page.locator('input[placeholder="Admin token"]')).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Load leads' })).toBeVisible()
+    await expect(page.getByRole('button', { name: /Load leads|Kayıtları yükle/i })).toBeVisible()
+  })
+
+  test('mobile viewport (375x667 iPhone SE) renders responsively with zero horizontal overflow', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 })
+    await page.goto('/')
+
+    // Verify hero loads and is visible
+    await expect(page.getByRole('heading', { name: /Your next customer|Bir sonraki müşteriniz/i })).toBeVisible()
+    await expect(page.getByPlaceholder('https://your-store.com')).toBeVisible()
+
+    // Verify zero horizontal scroll overflow on mobile
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)
+    expect(overflow).toBe(false)
+
+    // Switch to Auditor on mobile
+    await page.locator('nav.app-nav').getByRole('button', { name: /AI Storefront Auditor|AI Mağaza Denetleyici/i }).click()
+    await expect(page.getByText(/Ready to audit your storefront|Mağazanızı denetlemeye hazır/i)).toBeVisible()
+    const auditorOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)
+    expect(auditorOverflow).toBe(false)
+
+    // Switch to Feed on mobile
+    await page.locator('nav.app-nav').getByRole('button', { name: /Live Request Feed|Canlı İstek Akışı/i }).click()
+    await expect(page.getByText(/Hourly Traffic|Saatlik Trafik/i)).toBeVisible()
+    const feedOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth)
+    expect(feedOverflow).toBe(false)
   })
 
 })

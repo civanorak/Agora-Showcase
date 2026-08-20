@@ -59,16 +59,15 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
       </div>
 
       {/* ── Demo controls (sandbox) ── */}
-      <div style={{
-        background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px',
-        padding: '16px 20px', marginBottom: '24px',
+      <div className="card-padded" style={{
+        marginBottom: '24px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px',
       }}>
         <div>
           <div style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--ink)' }}>{t('AI Agent Simulator (Sandbox)', 'AI Ajan Simülatörü (Deneme)')}</div>
           <div style={{ fontSize: '11.5px', color: '#71717a', marginTop: '3px' }}>{t('Simulate AI bots visiting your store to test live detection in real-time.', 'Canlı tespiti gerçek zamanlı test etmek için mağazanızı ziyaret eden AI botlarını simüle edin.')}</div>
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           {['chatgpt', 'claude', 'perplexity'].map(agent => (
             <button key={agent} className="vbtn" onClick={() => onSimulate(agent)} style={{
               padding: '6px 14px', borderRadius: '6px', fontSize: '12px', fontWeight: 600,
@@ -81,7 +80,7 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
       </div>
 
       {/* ── Stat cards ── */}
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '12px', marginBottom: '24px' }}>
         <StatCard label={t('Total Requests', 'Toplam İstek')}   value={total} />
         <StatCard label={t('AI Traffic', 'AI Trafiği')}       value={aiCount}
           note={total ? t(`${Math.round(aiCount / total * 100)}% of all traffic`, `tüm trafiğin %${Math.round(aiCount / total * 100)}’i`) : undefined} />
@@ -94,7 +93,7 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
       <TrafficBar events={events} />
 
       {/* ── Time-series chart ── */}
-      <div style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: '8px', padding: '18px 20px', marginBottom: '20px' }}>
+      <div className="card-padded" style={{ marginBottom: '20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '12px' }}>
           <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>{t('Hourly Traffic', 'Saatlik Trafik')}</span>
           <span style={{ fontSize: '11px', color: '#a1a1aa' }}>{t('last 24 h · refreshes every 30 s', 'son 24 sa · 30 sn’de bir yenilenir')}</span>
@@ -157,7 +156,7 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
             <div style={{ fontSize: '12.5px', color: '#71717a', marginBottom: '16px' }}>
               {t('Simulate AI agents visiting your store in real-time using the buttons below:', 'Aşağıdaki butonlarla mağazanızı ziyaret eden AI ajanlarını gerçek zamanlı simüle edin:')}
             </div>
-            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
               {['chatgpt', 'claude', 'perplexity'].map(agent => (
                 <button key={agent} className="vbtn" onClick={() => onSimulate(agent)} style={{
                   padding: '8px 16px', borderRadius: '6px', fontSize: '12px', fontWeight: 600,
@@ -174,7 +173,7 @@ export function Feed({ events, stats, isLoading, streamMode, newIds, onSimulate 
             {t('No results match the current filters.', 'Mevcut filtrelerle eşleşen sonuç yok.')}
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
+          <div className="table-scroll-container">
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12.5px' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #e4e4e7' }}>
